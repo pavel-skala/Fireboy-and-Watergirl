@@ -4,16 +4,19 @@ const c = canvas.getContext("2d");
 canvas.height = 36 * 29;
 canvas.width = 36 * 39;
 
+const collisionBlocks = createObjectsFromArray(collisionsLevel1);
 
 const level1 = new Sprite({
     position: {
         x: 0,
-        y: 0
+        y: 0,
     },
-    imgSrc: "../res/img/map1.png"
-})
+    imgSrc: "../res/img/map1.png",
+});
 
-const player = new Player();
+const player = new Player({
+    collisionBlocks: collisionBlocks,
+});
 
 let keys = {
     a: false,
@@ -23,10 +26,13 @@ let keys = {
 function animation() {
     window.requestAnimationFrame(animation);
 
-    level1.draw()
+    level1.draw();
+    collisionBlocks.forEach((collisionBlock) => {
+        collisionBlock.draw();
+    });
 
-    if (keys.a)player.velocity.x = -7
-    else if (keys.d) player.velocity.x = 7;
+    if (keys.a) player.velocity.x = -5;
+    else if (keys.d) player.velocity.x = 5;
     else player.velocity.x = 0;
 
     player.update();
