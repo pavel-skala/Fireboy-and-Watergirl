@@ -16,6 +16,10 @@ const level1 = new Sprite({
 
 const player = new Player({
     collisionBlocks: collisionBlocks,
+    position: {
+        x: 900,
+        y: 1000,
+    },
 });
 
 let keys = {
@@ -31,8 +35,8 @@ function animation() {
         collisionBlock.draw();
     });
 
-    if (keys.a) player.velocity.x = -5;
-    else if (keys.d) player.velocity.x = 5;
+    if (keys.a) player.velocity.x = -2;
+    else if (keys.d) player.velocity.x = 2;
     else player.velocity.x = 0;
 
     player.update();
@@ -43,7 +47,7 @@ window.addEventListener("keydown", (event) => {
     switch (event.key) {
         case "w":
             if (player.velocity.y == 0) {
-                player.velocity.y = -20;
+                player.velocity.y = -15;
             }
             break;
         case "a":

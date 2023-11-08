@@ -1,19 +1,15 @@
 class Player {
-    constructor({ collisionBlocks = [] }) {
-        this.position = {
-            x: 100,
-            y: 100,
-        };
+    constructor({ collisionBlocks = [], position }) {
+        this.position = position;
         this.velocity = {
             x: 0,
             y: 0,
         };
 
-        this.height = 36;
+        this.height = 70;
         this.width = 36;
 
         this.collisionBlocks = collisionBlocks;
-        console.log(this.collisionBlocks);
     }
     update() {
         c.fillStyle = "rgb(0,0,255)";
