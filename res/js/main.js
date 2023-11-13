@@ -18,7 +18,7 @@ const player = new Player({
     collisionBlocks: collisionBlocks,
     position: {
         x: 900,
-        y: 1000,
+        y: 100,
     },
 });
 
@@ -46,7 +46,7 @@ animation();
 window.addEventListener("keydown", (event) => {
     switch (event.key) {
         case "w":
-            if (player.velocity.y == 0) {
+            if (player.velocity.y == 0 && player.isOnBlock) {
                 player.velocity.y = -15;
             }
             break;
