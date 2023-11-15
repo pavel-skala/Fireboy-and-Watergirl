@@ -11,7 +11,7 @@ const level1 = new Sprite({
         x: 0,
         y: 0,
     },
-    imgSrc: "../res/img/map1.png",
+    imgSrc: "./res/img/map1.png",
 });
 
 const player = new Player({
