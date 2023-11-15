@@ -18,7 +18,7 @@ const player = new Player({
     collisionBlocks: collisionBlocks,
     position: {
         x: 900,
-        y: 100,
+        y: 1000,
     },
 });
 

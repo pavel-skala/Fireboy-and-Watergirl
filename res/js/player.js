@@ -34,59 +34,44 @@ class Player {
             const collisionBlock = this.collisionBlocks[i];
 
             if (
-                this.position.x <=
-                    collisionBlock.position.x + collisionBlock.width &&
+                this.position.x <= collisionBlock.position.x + collisionBlock.width &&
                 this.position.x + this.width >= collisionBlock.position.x &&
                 this.position.y + this.height >= collisionBlock.position.y &&
-                this.position.y <=
-                    collisionBlock.position.y + collisionBlock.height
+                this.position.y <= collisionBlock.position.y + collisionBlock.height
             ) {
                 if (collisionBlock.shape == "square") {
                     //player going to left
                     if (this.velocity.x < 0) {
-                        this.position.x =
-                            collisionBlock.position.x +
-                            collisionBlock.width +
-                            0.01;
+                        this.position.x = collisionBlock.position.x + collisionBlock.width + 0.01;
                         break;
                     }
                     //player going to right
                     if (this.velocity.x > 0) {
-                        this.position.x =
-                            collisionBlock.position.x - this.width - 0.01;
+                        this.position.x = collisionBlock.position.x - this.width - 0.01;
                         break;
                     }
                 }
                 //triangle collision
                 else if (collisionBlock.shape == "triangle") {
-                    if (
-                        collisionBlock.direction.y == "up" &&
-                        this.isOnBlock == false
-                    ) {
+                    if (collisionBlock.direction.y == "up" && this.isOnBlock == false) {
                         let xPos = this.calculateXPos(collisionBlock);
-                        if (
-                            this.position.y + this.height >=
-                            collisionBlock.position.y + xPos
-                        ) {
+                        if (this.position.y + this.height >= collisionBlock.position.y + xPos) {
+                            //triangle to right
                             if (
                                 collisionBlock.direction.x == "right" &&
                                 this.lastPositionX >=
-                                    collisionBlock.position.x +
-                                        collisionBlock.width
+                                    collisionBlock.position.x + collisionBlock.width
                             ) {
                                 this.position.x =
-                                    collisionBlock.position.x +
-                                    collisionBlock.width +
-                                    0.01;
+                                    collisionBlock.position.x + collisionBlock.width + 0.01;
                                 break;
-                            } else if (
+                            }
+                            //triangle to left
+                            else if (
                                 collisionBlock.direction.x == "left" &&
                                 this.lastPositionX <= collisionBlock.position.x
                             ) {
-                                this.position.x =
-                                    collisionBlock.position.x -
-                                    this.width -
-                                    0.01;
+                                this.position.x = collisionBlock.position.x - this.width - 0.01;
                                 break;
                             }
                         }
@@ -108,41 +93,28 @@ class Player {
             if (xPos == 0) xPos = 36;
             else if (xPos < 1) xPos = 0;
         }
+        if (collisionBlock.shape == "pondTriangle") xPos /= 2;
         return xPos;
     }
     //change position for collision in triangle
     triangleChangePosition(collisionBlock, xPos) {
         //triangle going up
         if (collisionBlock.direction.y == "up") {
-            if (
-                this.position.y + this.height >=
-                collisionBlock.position.y + xPos
-            ) {
+            if (this.position.y + this.height >= collisionBlock.position.y + xPos) {
                 if (this.velocity.y >= 0) {
                     this.isOnBlock = true;
-                    this.position.y =
-                        collisionBlock.position.y + xPos - this.height - 0.01;
+                    this.position.y = collisionBlock.position.y + xPos - this.height - 0.01;
                     this.velocity.y = 0;
                 } else {
                     this.velocity.y = 0;
-                    this.position.y =
-                        collisionBlock.position.y +
-                        collisionBlock.height +
-                        0.01;
+                    this.position.y = collisionBlock.position.y + collisionBlock.height + 0.01;
                 }
             }
         }
         //triangle going down
         else {
-            if (
-                this.position.y <
-                collisionBlock.position.y + collisionBlock.height - xPos
-            ) {
-                this.position.y =
-                    collisionBlock.position.y +
-                    collisionBlock.height -
-                    xPos +
-                    0.01;
+            if (this.position.y < collisionBlock.position.y + collisionBlock.height - xPos) {
+                this.position.y = collisionBlock.position.y + collisionBlock.height - xPos + 0.01;
                 this.velocity.y = 0;
             }
         }
@@ -154,30 +126,24 @@ class Player {
             const collisionBlock = this.collisionBlocks[i];
 
             if (
-                this.position.x <=
-                    collisionBlock.position.x + collisionBlock.width &&
+                this.position.x <= collisionBlock.position.x + collisionBlock.width &&
                 this.position.x + this.width >= collisionBlock.position.x &&
                 this.position.y + this.height >= collisionBlock.position.y &&
-                this.position.y <=
-                    collisionBlock.position.y + collisionBlock.height
+                this.position.y <= collisionBlock.position.y + collisionBlock.height
             ) {
                 //collision for square
                 if (collisionBlock.shape == "square") {
                     //player going up
                     if (this.velocity.y < 0) {
                         this.velocity.y = 0;
-                        this.position.y =
-                            collisionBlock.position.y +
-                            collisionBlock.height +
-                            0.01;
+                        this.position.y = collisionBlock.position.y + collisionBlock.height + 0.01;
                         break;
                     }
                     //player going down
                     if (this.velocity.y > 0) {
                         this.isOnBlock = true;
                         this.velocity.y = 0;
-                        this.position.y =
-                            collisionBlock.position.y - this.height - 0.01;
+                        this.position.y = collisionBlock.position.y - this.height - 0.01;
                         break;
                     }
                 }
@@ -185,8 +151,7 @@ class Player {
                 else if (collisionBlock.direction.x == "left") {
                     //check collision for triangle up left
                     if (
-                        this.position.x + this.width >=
-                            collisionBlock.position.x &&
+                        this.position.x + this.width >= collisionBlock.position.x &&
                         this.position.x + this.width <=
                             collisionBlock.position.x + collisionBlock.width &&
                         collisionBlock.direction.y == "up"
@@ -199,8 +164,7 @@ class Player {
                     }
                     // check collision for triangle down left
                     else if (
-                        this.position.x + this.width >=
-                            collisionBlock.position.x &&
+                        this.position.x + this.width >= collisionBlock.position.x &&
                         this.position.x + this.width <=
                             collisionBlock.position.x + collisionBlock.width &&
                         collisionBlock.direction.y == "down" &&
@@ -222,14 +186,49 @@ class Player {
                     }
 
                     //check collision for triangle down right
-                    else if (
-                        collisionBlock.direction.y == "down" &&
-                        this.velocity.y < 0
-                    ) {
+                    else if (collisionBlock.direction.y == "down" && this.velocity.y < 0) {
                         let xPos = this.calculateXPos(collisionBlock);
 
                         this.triangleChangePosition(collisionBlock, xPos);
                         break;
+                    }
+                }
+                //collision for pond
+                else if (collisionBlock.shape == "pond") {
+                    if (
+                        this.position.x <= collisionBlock.position.x + collisionBlock.width &&
+                        this.position.x >= collisionBlock.position.x &&
+                        this.position.y + this.height >=
+                            collisionBlock.position.y + collisionBlock.height / 2 &&
+                        this.position.y + this.height <=
+                            collisionBlock.position.y + collisionBlock.height
+                    ) {
+                        //player going down
+                        if (this.velocity.y > 0) {
+                            this.isOnBlock = true;
+                            this.velocity.y = 0;
+                            this.position.y =
+                                collisionBlock.position.y -
+                                this.height -
+                                0.01 +
+                                collisionBlock.height / 2;
+                            if (this.collisionBlocks[i + 1].shape != "pondTriangle") {
+                                break;
+                            }
+                        }
+                    } else if (
+                        this.position.x <= collisionBlock.position.x + collisionBlock.width &&
+                        this.position.x >= collisionBlock.position.x &&
+                        this.position.y >= collisionBlock.position.y + collisionBlock.height / 2 &&
+                        this.position.y <= collisionBlock.position.y + collisionBlock.height
+                    ) {
+                        //player going up
+                        if (this.velocity.y < 0) {
+                            this.velocity.y = 0;
+                            this.position.y =
+                                collisionBlock.position.y + collisionBlock.height + 0.01;
+                            break;
+                        }
                     }
                 }
             }
