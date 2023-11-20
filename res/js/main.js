@@ -27,19 +27,33 @@ let keys = {
     d: false,
 };
 
+
+let now
+let delta
+let fixedFps = 60
+let interval = 1000 / fixedFps
+let then = Date.now()
+
 function animation() {
     window.requestAnimationFrame(animation);
 
-    level1.draw();
-    collisionBlocks.forEach((collisionBlock) => {
-        collisionBlock.draw();
-    });
+    now = Date.now()
+    delta = now - then
 
-    if (keys.a) player.velocity.x = -2;
-    else if (keys.d) player.velocity.x = 2;
-    else player.velocity.x = 0;
-
-    player.update();
+    if (delta > interval) {
+        then = now - (delta % interval)
+        
+        level1.draw();
+        collisionBlocks.forEach((collisionBlock) => {
+            collisionBlock.draw();
+        });
+        
+        if (keys.a) player.velocity.x = -2;
+        else if (keys.d) player.velocity.x = 2;
+        else player.velocity.x = 0;
+        
+        player.update();
+    }
 }
 animation();
 
