@@ -20,38 +20,49 @@ const player = new Player({
         x: 900,
         y: 1000,
     },
+    imgSrc: "./res/img/watergirl.png",
+
+    legs: new Sprite({
+        position: {
+            x: 900,
+            y: 1000,
+        },
+        imgSrc: "./res/img/watergirl_legs.png",
+    }),
 });
 
 let keys = {
     a: false,
     d: false,
+    w: false,
 };
 
-
-let now
-let delta
-let fixedFps = 60
-let interval = 1000 / fixedFps
-let then = Date.now()
+let now;
+let delta;
+let fixedFps = 60;
+let interval = 1000 / fixedFps;
+let then = Date.now();
 
 function animation() {
     window.requestAnimationFrame(animation);
 
-    now = Date.now()
-    delta = now - then
+    now = Date.now();
+    delta = now - then;
 
     if (delta > interval) {
-        then = now - (delta % interval)
-        
+        then = now - (delta % interval);
+
         level1.draw();
         collisionBlocks.forEach((collisionBlock) => {
             collisionBlock.draw();
         });
-        
+
         if (keys.a) player.velocity.x = -2;
         else if (keys.d) player.velocity.x = 2;
         else player.velocity.x = 0;
-        
+
+        player.legs.draw();
+        player.draw();
         player.update();
     }
 }
@@ -60,8 +71,9 @@ animation();
 window.addEventListener("keydown", (event) => {
     switch (event.key) {
         case "w":
-            if (player.velocity.y == 0 && player.isOnBlock) {
+            if (!keys.w && player.isOnBlock) {
                 player.velocity.y = -15;
+                keys.w = true;
             }
             break;
         case "a":
@@ -75,6 +87,9 @@ window.addEventListener("keydown", (event) => {
 
 window.addEventListener("keyup", (event) => {
     switch (event.key) {
+        case "w":
+            keys.w = false;
+            break;
         case "a":
             keys.a = false;
             break;

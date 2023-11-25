@@ -5,7 +5,10 @@ class Sprite {
         this.image.src = imgSrc;
         this.image.onload = () => {
             this.loaded = true;
+            this.width = this.image.width;
+            this.height = this.image.height;
         };
+        this.loaded = false;
     }
     draw() {
         if (this.loaded) {
