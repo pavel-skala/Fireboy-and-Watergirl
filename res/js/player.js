@@ -1,11 +1,25 @@
 class Player extends Sprite {
-    constructor({ collisionBlocks, position, imgSrc, legs }) {
-        super({ position, imgSrc });
+    constructor({
+        collisionBlocks,
+        position,
+        imgSrc,
+        frameRate,
+        frameDelay,
+        imgRows,
+        currentRow,
+        animations,
+        legs,
+        keys,
+        element,
+    }) {
+        super({ position, imgSrc, frameRate, frameDelay, currentRow, imgRows, animations });
         this.position = position;
         this.velocity = {
             x: 0,
             y: 0,
         };
+        this.keys = keys;
+        this.element = element;
 
         this.collisionBlocks = collisionBlocks;
         this.isOnBlock = false;
@@ -35,25 +49,29 @@ class Player extends Sprite {
             left: false,
             right: false,
         };
+
+        this.currentAnimation = "idle";
+
+        this.died = false;
     }
     update() {
         this.hitboxPositionCalc();
         this.lastPosition = this.hitbox.position;
 
-        c.fillStyle = "rgba(0,0,255,0.5)";
-        c.fillRect(
-            this.hitbox.position.x,
-            this.hitbox.position.y,
-            this.hitbox.width,
-            this.hitbox.height - this.hitbox.legs.height
-        );
-        c.fillStyle = "rgba(0,255,0, 0.5)";
-        c.fillRect(
-            this.hitbox.legs.position.x,
-            this.hitbox.legs.position.y,
-            this.hitbox.legs.width,
-            this.hitbox.legs.height
-        );
+        // c.fillStyle = "rgba(0,0,255,0.5)";
+        // c.fillRect(
+        //     this.hitbox.position.x,
+        //     this.hitbox.position.y,
+        //     this.hitbox.width,
+        //     this.hitbox.height - this.hitbox.legs.height
+        // );
+        // c.fillStyle = "rgba(0,255,0, 0.5)";
+        // c.fillRect(
+        //     this.hitbox.legs.position.x,
+        //     this.hitbox.legs.position.y,
+        //     this.hitbox.legs.width,
+        //     this.hitbox.legs.height
+        // );
 
         this.position.x += this.velocity.x;
 
@@ -66,15 +84,51 @@ class Player extends Sprite {
         this.hitboxPositionCalc();
         this.verticalCollision();
 
+        this.hitboxPositionCalc();
+        this.calculateAngle();
+
         this.legs.position = {
-            x: this.position.x + 10,
-            y: this.position.y + 47,
+            x: this.position.x + 37,
+            y: this.position.y + 72,
         };
+    }
+    changeSprite(name) {
+        if (name != this.currentAnimation) {
+            //head animation
+            this.currentFrame = 0;
+            this.frameCount = 0;
+
+            this.frameRate = this.animations[name].frameRate;
+            this.currentRow = this.animations[name].currentRow;
+            if (this.animations[name].flipImage) this.flipImage = true;
+            else this.flipImage = false;
+
+            //legs animation
+            this.legs.currentFrame = 0;
+            this.legs.frameCount = 0;
+
+            this.legs.frameRate = this.legs.animations[name].frameRate;
+            this.legs.currentRow = this.legs.animations[name].currentRow;
+            if (this.legs.animations[name].flipImage) this.legs.flipImage = true;
+            else this.legs.flipImage = false;
+
+            this.currentAnimation = name;
+        }
+    }
+    calculateAngle() {
+        this.angle =
+            Math.atan2(
+                this.hitbox.position.y - this.lastPosition.y,
+                Math.abs(this.hitbox.position.x - this.lastPosition.x)
+            ) / 4;
+        if (this.angle > 0) {
+            this.angle /= 1.5;
+        }
     }
     hitboxPositionCalc() {
         this.hitbox.position = {
-            x: this.position.x + 4,
-            y: this.position.y + 12,
+            x: this.position.x + 31,
+            y: this.position.y + 37,
         };
         this.hitbox.legs.position = {
             x: this.hitbox.position.x + (this.hitbox.width - this.hitbox.legs.width) / 2,
@@ -82,7 +136,7 @@ class Player extends Sprite {
         };
     }
     gravity() {
-        this.velocity.y++;
+        this.velocity.y += 0.5;
         this.position.y += this.velocity.y;
     }
     horizontalCollision() {
@@ -249,10 +303,8 @@ class Player extends Sprite {
                 if (xPos == 36 || xPos < 1) xPos = 0;
             }
             //triangle to right
-            else {
-                if (xPos == 0) xPos = 36;
-                else if (xPos < 1) xPos = 0;
-            }
+            else if (xPos < 1) xPos = 0;
+
             if (collisionBlock.shape == "pondTriangle") xPos /= 2;
         }
         //triangle down
@@ -417,6 +469,17 @@ class Player extends Sprite {
                 }
                 //collision for triangle right
                 else if (collisionBlock.direction.x == "right") {
+                    //check pond
+                    if (
+                        collisionBlock.shape == "pondTriangle" &&
+                        this.element != collisionBlock.element &&
+                        this.hitbox.position.y + this.hitbox.height >=
+                            collisionBlock.position.y + 10
+                    ) {
+                        //end
+                        this.died = true;
+                    }
+
                     //player going from down to triangle
                     if (
                         collisionBlock.direction.y == "up" &&
@@ -432,7 +495,7 @@ class Player extends Sprite {
                     else if (
                         collisionBlock.direction.y == "up" &&
                         this.hitbox.legs.position.x >= collisionBlock.position.x &&
-                        this.hitbox.legs.position.x <=
+                        this.hitbox.legs.position.x <
                             collisionBlock.position.x + collisionBlock.width
                     ) {
                         let xPos = this.calculateXPos(collisionBlock);
@@ -469,6 +532,17 @@ class Player extends Sprite {
                 }
                 //collision for pond
                 else if (collisionBlock.shape == "pond") {
+                    //check pond
+                    if (
+                        this.element != collisionBlock.element &&
+                        this.hitbox.position.y + this.hitbox.height >=
+                            collisionBlock.position.y + 10 &&
+                        this.hitbox.position.y + this.hitbox.height <=
+                            collisionBlock.position.y + collisionBlock.height
+                    ) {
+                        //end
+                        this.died = true;
+                    }
                     //player going down
                     if (
                         this.hitbox.legs.position.x <=
