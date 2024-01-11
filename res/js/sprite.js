@@ -15,7 +15,7 @@ class Sprite {
         this.image.onload = () => {
             this.loaded = true;
             this.width = this.image.width;
-            this.height = this.image.height;
+            this.height = this.image.height / imgRows;
         };
         this.loaded = false;
 
@@ -40,14 +40,17 @@ class Sprite {
             const cropBox = {
                 position: {
                     x: (this.width / this.frameRate) * this.currentFrame,
-                    y: (this.height / this.imgRows) * (this.currentRow - 1),
+                    y: this.height * (this.currentRow - 1),
                 },
                 width: this.width / this.frameRate,
-                height: this.height / this.imgRows,
+                height: this.height,
             };
 
             //run animations
-            if (this.animations && this.currentAnimation != "idle") {
+            if (
+                this.animations &&
+                (this.currentAnimation == "left" || this.currentAnimation == "right")
+            ) {
                 c.save();
                 if (this.flipImage) {
                     c.translate(

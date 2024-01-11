@@ -103,6 +103,11 @@ class Player extends Sprite {
             if (this.animations[name].flipImage) this.flipImage = true;
             else this.flipImage = false;
 
+            this.currentAnimation = name;
+            if (name == "up" || name == "down") {
+                name = "idle";
+            }
+
             //legs animation
             this.legs.currentFrame = 0;
             this.legs.frameCount = 0;
@@ -111,8 +116,6 @@ class Player extends Sprite {
             this.legs.currentRow = this.legs.animations[name].currentRow;
             if (this.legs.animations[name].flipImage) this.legs.flipImage = true;
             else this.legs.flipImage = false;
-
-            this.currentAnimation = name;
         }
     }
     calculateAngle() {

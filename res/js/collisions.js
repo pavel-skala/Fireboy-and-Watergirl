@@ -218,7 +218,6 @@ function createObjectsFromArray(array) {
                         x: (i % 39) * 36,
                         y: Math.floor(i / 39) * 36,
                     },
-                    // imgSrc: `./res/img/ponds/${element}${border}.png`,
                     imgSrc: `./res/img/ponds.png`,
                     frameRate: 9,
                     imgRows: 6,

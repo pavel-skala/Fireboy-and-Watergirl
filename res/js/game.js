@@ -1,4 +1,10 @@
+let pauseGame = false;
+let menuActive = null;
+let continueAnimation = false;
+let menuButtonPressed = null;
+
 function playGame(levelNumber) {
+    let endGame = false;
     const [collisionBlocks, ponds] = createObjectsFromArray(collisionsLevel1);
 
     const map = new Sprite({
@@ -9,71 +15,84 @@ function playGame(levelNumber) {
         imgSrc: `./res/img/maps/map${levelNumber}.png`,
     });
 
-    const player = new Player({
-        collisionBlocks: collisionBlocks,
-        position: {
-            x: 900,
-            y: 1000,
-        },
-        imgSrc: "./res/img/watergirl_sprite.png",
-        keys: {
-            up: "w",
-            left: "a",
-            right: "d",
-            pressed: {
-                up: false,
-                left: false,
-                right: false,
-            },
-        },
-        frameRate: 1,
-        frameDelay: 4,
-        imgRows: 2,
-        currentRow: 1,
-        animations: {
-            idle: {
-                currentRow: 1,
-                frameRate: 1,
-            },
-            runLeft: {
-                currentRow: 2,
-                frameRate: 8,
-                flipImage: true,
-            },
-            runRight: {
-                currentRow: 2,
-                frameRate: 8,
-            },
-        },
-        element: "water",
+    const players = [];
 
-        legs: new Sprite({
+    //watergirl
+    players.push(
+        new Player({
+            collisionBlocks: collisionBlocks,
             position: {
                 x: 900,
                 y: 1000,
             },
-            imgSrc: "./res/img/watergirl_legs_sprite.png",
-            imgRows: 2,
-            currentRow: 1,
+            imgSrc: "./res/img/watergirl_spritesheet.png",
+            keys: {
+                up: "w",
+                left: "a",
+                right: "d",
+                pressed: {
+                    up: false,
+                    left: false,
+                    right: false,
+                },
+            },
             frameRate: 1,
             frameDelay: 4,
+            imgRows: 4,
+            currentRow: 1,
             animations: {
                 idle: {
                     currentRow: 1,
                     frameRate: 1,
                 },
-                runLeft: {
+                left: {
                     currentRow: 2,
+                    frameRate: 8,
                     flipImage: true,
+                },
+                right: {
+                    currentRow: 2,
                     frameRate: 8,
                 },
-                runRight: {
-                    currentRow: 2,
-                    frameRate: 8,
+                up: {
+                    currentRow: 3,
+                    frameRate: 1,
+                },
+                down: {
+                    currentRow: 4,
+                    frameRate: 1,
                 },
             },
-        }),
-    });
+            element: "water",
+
+            legs: new Sprite({
+                position: {
+                    x: 900,
+                    y: 1000,
+                },
+                imgSrc: "./res/img/watergirl_legs_sprite.png",
+                imgRows: 2,
+                currentRow: 1,
+                frameRate: 1,
+                frameDelay: 4,
+                animations: {
+                    idle: {
+                        currentRow: 1,
+                        frameRate: 1,
+                    },
+                    left: {
+                        currentRow: 2,
+                        flipImage: true,
+                        frameRate: 8,
+                    },
+                    right: {
+                        currentRow: 2,
+                        frameRate: 8,
+                    },
+                },
+            }),
+        })
+    );
 
     let now;
     let delta;
@@ -93,26 +112,47 @@ function playGame(levelNumber) {
                 collisionBlock.draw();
             });
 
-            if (player.keys.pressed.left) {
-                player.velocity.x = -4;
-                player.changeSprite("runLeft");
-            } else if (player.keys.pressed.right) {
-                player.velocity.x = 4;
-                player.changeSprite("runRight");
-            } else {
-                player.velocity.x = 0;
-                player.changeSprite("idle");
-            }
+            players.forEach((player) => {
+                if (player.keys.pressed.left) {
+                    player.velocity.x = -4;
+                    player.changeSprite("left");
+                } else if (player.keys.pressed.right) {
+                    player.velocity.x = 4;
+                    player.changeSprite("right");
+                } else {
+                    player.velocity.x = 0;
+                    if (player.velocity.y < -1.5) {
+                        player.changeSprite("up");
+                    } else if (player.velocity.y > 1.5) {
+                        player.changeSprite("down");
+                    } else {
+                        player.changeSprite("idle");
+                    }
+                }
 
-            player.legs.draw();
-            player.draw();
-            player.update();
+                player.legs.draw();
+                player.draw();
+                player.update();
+            });
 
             ponds.forEach((pond) => {
                 pond.draw();
             });
 
-            if (player.died) {
+            pauseButton.draw();
+
+            players.forEach((player) => {
+                if (player.died) {
+                    endGame = true;
+                }
+            });
+
+            if (endGame) {
+                endFunction();
+                return;
+            } else if (pauseGame) {
+                menuActive = "paused";
+                drawMenuAnimation(drawMenuPause);
                 return;
             }
         }
@@ -120,34 +160,142 @@ function playGame(levelNumber) {
     }
     animation();
 
-    window.addEventListener("keydown", (event) => {
-        switch (event.key) {
-            case player.keys.up:
-                if (player.isOnBlock && !player.keys.pressed.up) {
-                    player.velocity.y = -10;
-                    player.keys.pressed.up = true;
-                }
-                break;
-            case player.keys.left:
-                player.keys.pressed.left = true;
-                break;
-            case player.keys.right:
-                player.keys.pressed.right = true;
-                break;
+    function endFunction() {
+        menuActive = "lost";
+
+        drawMenuAnimation(drawMenuLost);
+    }
+
+    function drawAll() {
+        map.draw();
+        collisionBlocks.forEach((collisionBlock) => {
+            collisionBlock.draw();
+        });
+        players.forEach((player) => {
+            player.draw();
+            player.legs.draw();
+        });
+        ponds.forEach((pond) => {
+            pond.draw();
+        });
+        pauseButton.draw();
+    }
+
+    function drawMenuAnimation(name) {
+        let transform = 1000;
+
+        const menuAnimation = setInterval(() => {
+            drawAll();
+
+            name(transform);
+            transform -= 10;
+            if (transform < 0) {
+                clearInterval(menuAnimation);
+            }
+        }, 1);
+    }
+
+    canvas.onmousedown = (event) => {
+        if (menuButtonPressed) return;
+
+        const mousePos = getMousePos(event);
+
+        for (const menuButton in buttons[menuActive]) {
+            if (checkButtonCollision(mousePos, buttons[menuActive][menuButton])) {
+                menuButtonPressed = menuButton;
+                buttons[menuActive][menuButton].scaleDown();
+                buttons[menuActive][menuButton].draw();
+            }
         }
+    };
+
+    canvas.onmouseup = (event) => {
+        const mousePos = getMousePos(event);
+
+        if (!menuActive) {
+            if (checkButtonCollision(mousePos, pauseButton)) {
+                pauseGame = true;
+            }
+            return;
+        }
+
+        for (const menuButton in buttons[menuActive]) {
+            if (
+                checkButtonCollision(mousePos, buttons[menuActive][menuButton]) &&
+                menuButtonPressed == menuButton
+            ) {
+                buttons[menuActive][menuButton].resetSize();
+                buttons[menuActive][menuButton].draw();
+
+                setTimeout(() => {
+                    if (!menuActive) return;
+
+                    buttons[menuActive][menuButton].run();
+
+                    if (continueAnimation) {
+                        let transform = 0;
+                        const menuAnimation = setInterval(() => {
+                            drawAll();
+
+                            drawMenuPause(transform);
+
+                            transform += 10;
+                            if (transform >= 1000) {
+                                clearInterval(menuAnimation);
+                                animation();
+                                continueAnimation = false;
+                            }
+                        }, 1);
+                    }
+
+                    menuActive = null;
+                    menuButtonPressed = null;
+                }, 200);
+                return;
+            }
+        }
+
+        if (menuButtonPressed) {
+            buttons[menuActive][menuButtonPressed].resetSize();
+            buttons[menuActive][menuButtonPressed].draw();
+            menuButtonPressed = null;
+        }
+    };
+
+    window.addEventListener("keydown", (event) => {
+        if (pauseGame) return;
+        players.forEach((player) => {
+            switch (event.key) {
+                case player.keys.up:
+                    if (player.isOnBlock && !player.keys.pressed.up) {
+                        player.velocity.y = -10;
+                        player.keys.pressed.up = true;
+                    }
+                    break;
+                case player.keys.left:
+                    player.keys.pressed.left = true;
+                    break;
+                case player.keys.right:
+                    player.keys.pressed.right = true;
+                    break;
+            }
+        });
     });
 
     window.addEventListener("keyup", (event) => {
-        switch (event.key) {
-            case player.keys.up:
-                player.keys.pressed.up = false;
-                break;
-            case player.keys.left:
-                player.keys.pressed.left = false;
-                break;
-            case player.keys.right:
-                player.keys.pressed.right = false;
-                break;
-        }
+        if (pauseGame) return;
+        players.forEach((player) => {
+            switch (event.key) {
+                case player.keys.up:
+                    player.keys.pressed.up = false;
+                    break;
+                case player.keys.left:
+                    player.keys.pressed.left = false;
+                    break;
+                case player.keys.right:
+                    player.keys.pressed.right = false;
+                    break;
+            }
+        });
     });
 }
