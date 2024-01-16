@@ -15,17 +15,154 @@ function playGame(levelNumber) {
         imgSrc: `./res/img/maps/map${levelNumber}.png`,
     });
 
+    const diamonds = [
+        new Diamond({
+            position: {
+                x: 10 * 36,
+                y: 2 * 36,
+            },
+            element: "fire",
+        }),
+        new Diamond({
+            position: {
+                x: 2 * 36,
+                y: 5 * 36,
+            },
+            element: "water",
+        }),
+        new Diamond({
+            position: {
+                x: 18 * 36,
+                y: 4 * 36,
+            },
+            element: "fire",
+        }),
+        new Diamond({
+            position: {
+                x: 22 * 36,
+                y: 4 * 36,
+            },
+            element: "water",
+        }),
+        new Diamond({
+            position: {
+                x: 7 * 36,
+                y: 13 * 36,
+            },
+            element: "fire",
+        }),
+        new Diamond({
+            position: {
+                x: 23 * 36,
+                y: 14 * 36,
+            },
+            element: "water",
+        }),
+        new Diamond({
+            position: {
+                x: 20 * 36,
+                y: 26 * 36,
+            },
+            element: "fire",
+        }),
+        new Diamond({
+            position: {
+                x: 28 * 36,
+                y: 26 * 36,
+            },
+            element: "water",
+        }),
+    ];
+
     const players = [];
+
+    //fireboy
+    players.push(
+        new Player({
+            position: {
+                x: 440,
+                y: 500,
+            },
+            collisionBlocks,
+            diamonds,
+            imgSrc: "./res/img/fireboy_sprite.png",
+            element: "fire",
+            frameRate: 1,
+            frameDelay: 4,
+            imgRows: 4,
+            currentRow: 1,
+            keys: {
+                up: "ArrowUp",
+                left: "ArrowLeft",
+                right: "ArrowRight",
+                pressed: {
+                    up: false,
+                    left: false,
+                    right: false,
+                },
+            },
+            animations: {
+                idle: {
+                    currentRow: 1,
+                    frameRate: 1,
+                },
+                left: {
+                    currentRow: 2,
+                    frameRate: 8,
+                    flipImage: true,
+                },
+                right: {
+                    currentRow: 2,
+                    frameRate: 8,
+                },
+                up: {
+                    currentRow: 3,
+                    frameRate: 1,
+                },
+                down: {
+                    currentRow: 4,
+                    frameRate: 1,
+                },
+            },
+            legs: new Sprite({
+                position: {
+                    x: 600 + 6,
+                    y: 700 + 44,
+                },
+                imgSrc: "./res/img/fireboy_legs_sprite.png",
+                imgRows: 2,
+                currentRow: 1,
+                frameRate: 1,
+                frameDelay: 4,
+                animations: {
+                    idle: {
+                        currentRow: 1,
+                        frameRate: 1,
+                    },
+                    left: {
+                        currentRow: 2,
+                        flipImage: true,
+                        frameRate: 8,
+                    },
+                    right: {
+                        currentRow: 2,
+                        frameRate: 8,
+                    },
+                },
+            }),
+        })
+    );
 
     //watergirl
     players.push(
         new Player({
-            collisionBlocks: collisionBlocks,
+            collisionBlocks,
+            diamonds,
             position: {
-                x: 900,
-                y: 1000,
+                x: 550,
+                y: 870,
             },
-            imgSrc: "./res/img/watergirl_spritesheet.png",
+            imgSrc: "./res/img/watergirl_sprite.png",
             keys: {
                 up: "w",
                 left: "a",
@@ -113,6 +250,14 @@ function playGame(levelNumber) {
             });
 
             players.forEach((player) => {
+                player.checkDiamonds();
+            });
+
+            diamonds.forEach((diamond) => {
+                diamond.draw();
+            });
+
+            players.forEach((player) => {
                 if (player.keys.pressed.left) {
                     player.velocity.x = -4;
                     player.changeSprite("left");
@@ -130,8 +275,8 @@ function playGame(levelNumber) {
                     }
                 }
 
-                player.legs.draw();
                 player.draw();
+                player.legs.draw();
                 player.update();
             });
 
@@ -170,6 +315,9 @@ function playGame(levelNumber) {
         map.draw();
         collisionBlocks.forEach((collisionBlock) => {
             collisionBlock.draw();
+        });
+        diamonds.forEach((diamond) => {
+            diamond.draw();
         });
         players.forEach((player) => {
             player.draw();
