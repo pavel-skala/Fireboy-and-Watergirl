@@ -1,139 +1,86 @@
-let pauseGame = false;
-let menuActive = null;
-let continueAnimation = false;
-let menuButtonPressed = null;
+import { Player } from "./player.js";
+import { Sprite } from "./sprite.js";
+import { levels } from "./collisionBlocks.js";
+import { createObjectsFromArray } from "./collisions.js";
+import { Diamond } from "./classes/diamond.js";
+import { pauseButton, menuButtons, checkButtonCollision } from "./buttons.js";
+import {
+    getMousePos,
+    continueAnimation,
+    setContinueAnimation,
+    endGame,
+    currentLevel,
+    gameData,
+    setEndGame,
+} from "./helpers.js";
+import { drawMenuPause, drawMenuLost } from "./menus.js";
 
-function playGame(levelNumber) {
-    let endGame = false;
-    const [collisionBlocks, ponds] = createObjectsFromArray(collisionsLevel1);
+let bgBlocks, menuActive, died, menuButtonPressed, pauseGame, collisionBlocks, ponds;
 
-    const map = new Sprite({
+let diamonds = [];
+let players = [];
+
+const background = new Sprite({
+    position: {
+        x: 0,
+        y: 0,
+    },
+    imgSrc: `./res/img/maps/bg.png`,
+});
+
+function startGame() {
+    menuActive = null;
+    died = false;
+    menuButtonPressed = null;
+    pauseGame = false;
+    diamonds = [];
+    players = [];
+
+    const values = createObjectsFromArray(levels[currentLevel]);
+    collisionBlocks = values.objects;
+    ponds = values.ponds;
+
+    bgBlocks = new Sprite({
         position: {
             x: 0,
             y: 0,
         },
-        imgSrc: `./res/img/maps/map${levelNumber}.png`,
+        imgSrc: `./res/img/maps/blocks${currentLevel}.png`,
     });
 
-    const diamonds = [
-        new Diamond({
-            position: {
-                x: 10 * 36,
-                y: 2 * 36,
-            },
-            element: "fire",
-        }),
-        new Diamond({
-            position: {
-                x: 2 * 36,
-                y: 5 * 36,
-            },
-            element: "water",
-        }),
-        new Diamond({
-            position: {
-                x: 18 * 36,
-                y: 4 * 36,
-            },
-            element: "fire",
-        }),
-        new Diamond({
-            position: {
-                x: 22 * 36,
-                y: 4 * 36,
-            },
-            element: "water",
-        }),
-        new Diamond({
-            position: {
-                x: 7 * 36,
-                y: 13 * 36,
-            },
-            element: "fire",
-        }),
-        new Diamond({
-            position: {
-                x: 23 * 36,
-                y: 14 * 36,
-            },
-            element: "water",
-        }),
-        new Diamond({
-            position: {
-                x: 20 * 36,
-                y: 26 * 36,
-            },
-            element: "fire",
-        }),
-        new Diamond({
-            position: {
-                x: 28 * 36,
-                y: 26 * 36,
-            },
-            element: "water",
-        }),
-    ];
+    gameData["diamonds"][currentLevel].forEach((diamond) => {
+        diamonds.push(
+            new Diamond({
+                position: diamond.position,
+                element: diamond.element,
+            })
+        );
+    });
 
-    const players = [];
+    for (const player in gameData.players) {
+        const currentPlayer = gameData.players[player];
 
-    //fireboy
-    players.push(
-        new Player({
-            position: {
-                x: 440,
-                y: 500,
-            },
-            collisionBlocks,
-            diamonds,
-            imgSrc: "./res/img/fireboy_sprite.png",
-            element: "fire",
-            frameRate: 1,
-            frameDelay: 4,
-            imgRows: 4,
-            currentRow: 1,
-            keys: {
-                up: "ArrowUp",
-                left: "ArrowLeft",
-                right: "ArrowRight",
-                pressed: {
-                    up: false,
-                    left: false,
-                    right: false,
-                },
-            },
-            animations: {
-                idle: {
-                    currentRow: 1,
-                    frameRate: 1,
-                },
-                left: {
-                    currentRow: 2,
-                    frameRate: 8,
-                    flipImage: true,
-                },
-                right: {
-                    currentRow: 2,
-                    frameRate: 8,
-                },
-                up: {
-                    currentRow: 3,
-                    frameRate: 1,
-                },
-                down: {
-                    currentRow: 4,
-                    frameRate: 1,
-                },
-            },
-            legs: new Sprite({
-                position: {
-                    x: 600 + 6,
-                    y: 700 + 44,
-                },
-                imgSrc: "./res/img/fireboy_legs_sprite.png",
-                imgRows: 2,
-                currentRow: 1,
+        players.push(
+            new Player({
+                position: { ...currentPlayer[currentLevel].position },
+                collisionBlocks,
+                diamonds,
+                imgSrc: currentPlayer.constants.imgSrc,
+                element: currentPlayer.constants.element,
                 frameRate: 1,
                 frameDelay: 4,
+                imgRows: 4,
+                currentRow: 1,
+                keys: {
+                    up: currentPlayer.constants.keys.up,
+                    left: currentPlayer.constants.keys.left,
+                    right: currentPlayer.constants.keys.right,
+                    pressed: {
+                        up: false,
+                        left: false,
+                        right: false,
+                    },
+                },
                 animations: {
                     idle: {
                         currentRow: 1,
@@ -141,95 +88,55 @@ function playGame(levelNumber) {
                     },
                     left: {
                         currentRow: 2,
-                        flipImage: true,
                         frameRate: 8,
+                        flipImage: true,
                     },
                     right: {
                         currentRow: 2,
                         frameRate: 8,
                     },
-                },
-            }),
-        })
-    );
-
-    //watergirl
-    players.push(
-        new Player({
-            collisionBlocks,
-            diamonds,
-            position: {
-                x: 550,
-                y: 870,
-            },
-            imgSrc: "./res/img/watergirl_sprite.png",
-            keys: {
-                up: "w",
-                left: "a",
-                right: "d",
-                pressed: {
-                    up: false,
-                    left: false,
-                    right: false,
-                },
-            },
-            frameRate: 1,
-            frameDelay: 4,
-            imgRows: 4,
-            currentRow: 1,
-            animations: {
-                idle: {
-                    currentRow: 1,
-                    frameRate: 1,
-                },
-                left: {
-                    currentRow: 2,
-                    frameRate: 8,
-                    flipImage: true,
-                },
-                right: {
-                    currentRow: 2,
-                    frameRate: 8,
-                },
-                up: {
-                    currentRow: 3,
-                    frameRate: 1,
-                },
-                down: {
-                    currentRow: 4,
-                    frameRate: 1,
-                },
-            },
-            element: "water",
-
-            legs: new Sprite({
-                position: {
-                    x: 900,
-                    y: 1000,
-                },
-                imgSrc: "./res/img/watergirl_legs_sprite.png",
-                imgRows: 2,
-                currentRow: 1,
-                frameRate: 1,
-                frameDelay: 4,
-                animations: {
-                    idle: {
-                        currentRow: 1,
+                    up: {
+                        currentRow: 3,
                         frameRate: 1,
                     },
-                    left: {
-                        currentRow: 2,
-                        flipImage: true,
-                        frameRate: 8,
-                    },
-                    right: {
-                        currentRow: 2,
-                        frameRate: 8,
+                    down: {
+                        currentRow: 4,
+                        frameRate: 1,
                     },
                 },
-            }),
-        })
-    );
+                legs: new Sprite({
+                    position: {
+                        x: currentPlayer[currentLevel].position.x + 37,
+                        y: currentPlayer[currentLevel].position.y + 72,
+                    },
+                    imgSrc: currentPlayer.constants.legsImgSrc,
+                    imgRows: 2,
+                    currentRow: 1,
+                    frameRate: 1,
+                    frameDelay: 4,
+                    animations: {
+                        idle: {
+                            currentRow: 1,
+                            frameRate: 1,
+                        },
+                        left: {
+                            currentRow: 2,
+                            flipImage: true,
+                            frameRate: 8,
+                        },
+                        right: {
+                            currentRow: 2,
+                            frameRate: 8,
+                        },
+                    },
+                }),
+            })
+        );
+    }
+}
+
+export function playGame() {
+    startGame()
 
     let now;
     let delta;
@@ -244,10 +151,7 @@ function playGame(levelNumber) {
         if (delta > interval) {
             then = now - (delta % interval);
 
-            map.draw();
-            collisionBlocks.forEach((collisionBlock) => {
-                collisionBlock.draw();
-            });
+            background.draw();
 
             players.forEach((player) => {
                 player.checkDiamonds();
@@ -255,6 +159,11 @@ function playGame(levelNumber) {
 
             diamonds.forEach((diamond) => {
                 diamond.draw();
+            });
+
+            bgBlocks.draw();
+            collisionBlocks.forEach((collisionBlock) => {
+                collisionBlock.draw();
             });
 
             players.forEach((player) => {
@@ -278,6 +187,10 @@ function playGame(levelNumber) {
                 player.draw();
                 player.legs.draw();
                 player.update();
+
+                if (player.died) {
+                    died = true;
+                }
             });
 
             ponds.forEach((pond) => {
@@ -286,13 +199,7 @@ function playGame(levelNumber) {
 
             pauseButton.draw();
 
-            players.forEach((player) => {
-                if (player.died) {
-                    endGame = true;
-                }
-            });
-
-            if (endGame) {
+            if (died) {
                 endFunction();
                 return;
             } else if (pauseGame) {
@@ -312,12 +219,13 @@ function playGame(levelNumber) {
     }
 
     function drawAll() {
-        map.draw();
-        collisionBlocks.forEach((collisionBlock) => {
-            collisionBlock.draw();
-        });
+        background.draw();
         diamonds.forEach((diamond) => {
             diamond.draw();
+        });
+        bgBlocks.draw();
+        collisionBlocks.forEach((collisionBlock) => {
+            collisionBlock.draw();
         });
         players.forEach((player) => {
             player.draw();
@@ -348,11 +256,11 @@ function playGame(levelNumber) {
 
         const mousePos = getMousePos(event);
 
-        for (const menuButton in buttons[menuActive]) {
-            if (checkButtonCollision(mousePos, buttons[menuActive][menuButton])) {
+        for (const menuButton in menuButtons[menuActive]) {
+            if (checkButtonCollision(mousePos, menuButtons[menuActive][menuButton])) {
                 menuButtonPressed = menuButton;
-                buttons[menuActive][menuButton].scaleDown();
-                buttons[menuActive][menuButton].draw();
+                menuButtons[menuActive][menuButton].scaleDown();
+                menuButtons[menuActive][menuButton].draw();
             }
         }
     };
@@ -363,22 +271,28 @@ function playGame(levelNumber) {
         if (!menuActive) {
             if (checkButtonCollision(mousePos, pauseButton)) {
                 pauseGame = true;
+                players.forEach((player) => {
+                    for (const key in player.keys.pressed) {
+                        player.keys.pressed[key] = false;
+                    }
+                });
             }
             return;
         }
 
-        for (const menuButton in buttons[menuActive]) {
+        for (const menuButton in menuButtons[menuActive]) {
             if (
-                checkButtonCollision(mousePos, buttons[menuActive][menuButton]) &&
+                checkButtonCollision(mousePos, menuButtons[menuActive][menuButton]) &&
                 menuButtonPressed == menuButton
             ) {
-                buttons[menuActive][menuButton].resetSize();
-                buttons[menuActive][menuButton].draw();
+                menuButtons[menuActive][menuButton].resetSize();
+                menuButtons[menuActive][menuButton].draw();
 
                 setTimeout(() => {
                     if (!menuActive) return;
 
-                    buttons[menuActive][menuButton].run();
+                    menuButtons[menuActive][menuButton].run();
+                    pauseGame = false;
 
                     if (continueAnimation) {
                         let transform = 0;
@@ -386,16 +300,19 @@ function playGame(levelNumber) {
                             drawAll();
 
                             drawMenuPause(transform);
-
                             transform += 10;
                             if (transform >= 1000) {
                                 clearInterval(menuAnimation);
                                 animation();
-                                continueAnimation = false;
+                                setContinueAnimation(false);
                             }
                         }, 1);
                     }
-
+                    if (endGame) {
+                        setEndGame(false);
+                        startGame();
+                        animation();
+                    }
                     menuActive = null;
                     menuButtonPressed = null;
                 }, 200);
@@ -404,8 +321,8 @@ function playGame(levelNumber) {
         }
 
         if (menuButtonPressed) {
-            buttons[menuActive][menuButtonPressed].resetSize();
-            buttons[menuActive][menuButtonPressed].draw();
+            menuButtons[menuActive][menuButtonPressed].resetSize();
+            menuButtons[menuActive][menuButtonPressed].draw();
             menuButtonPressed = null;
         }
     };
@@ -432,6 +349,7 @@ function playGame(levelNumber) {
 
     window.addEventListener("keyup", (event) => {
         if (pauseGame) return;
+
         players.forEach((player) => {
             switch (event.key) {
                 case player.keys.up:

@@ -1,4 +1,6 @@
-class Sprite {
+import { ctx } from "./helpers.js";
+
+export class Sprite {
     constructor({
         position,
         imgSrc,
@@ -51,19 +53,19 @@ class Sprite {
                 this.animations &&
                 (this.currentAnimation == "left" || this.currentAnimation == "right")
             ) {
-                c.save();
+                ctx.save();
                 if (this.flipImage) {
-                    c.translate(
+                    ctx.translate(
                         this.position.x + cropBox.width / 2,
                         this.position.y + cropBox.height / 2
                     );
-                    c.rotate(-this.angle);
-                    c.translate(
+                    ctx.rotate(-this.angle);
+                    ctx.translate(
                         -(this.position.x + cropBox.width / 2),
                         -(this.position.y + cropBox.height / 2)
                     );
-                    c.scale(-1, 1);
-                    c.drawImage(
+                    ctx.scale(-1, 1);
+                    ctx.drawImage(
                         this.image,
                         cropBox.position.x,
                         cropBox.position.y,
@@ -75,16 +77,16 @@ class Sprite {
                         cropBox.height
                     );
                 } else {
-                    c.translate(
+                    ctx.translate(
                         this.position.x + cropBox.width / 2,
                         this.position.y + cropBox.height / 2
                     );
-                    c.rotate(this.angle);
-                    c.translate(
+                    ctx.rotate(this.angle);
+                    ctx.translate(
                         -(this.position.x + cropBox.width / 2),
                         -(this.position.y + cropBox.height / 2)
                     );
-                    c.drawImage(
+                    ctx.drawImage(
                         this.image,
                         cropBox.position.x,
                         cropBox.position.y,
@@ -96,14 +98,14 @@ class Sprite {
                         cropBox.height
                     );
                 }
-                c.restore();
+                ctx.restore();
             }
 
             //flipped images
             else if (this.flipImage) {
-                c.save();
-                c.scale(-1, 1);
-                c.drawImage(
+                ctx.save();
+                ctx.scale(-1, 1);
+                ctx.drawImage(
                     this.image,
                     cropBox.position.x,
                     cropBox.position.y,
@@ -114,7 +116,7 @@ class Sprite {
                     cropBox.width,
                     cropBox.height
                 );
-                c.restore();
+                ctx.restore();
 
                 this.frameCount++;
                 if (this.frameCount == this.frameDelay) {
@@ -127,7 +129,7 @@ class Sprite {
                 }
                 return;
             } else {
-                c.drawImage(
+                ctx.drawImage(
                     this.image,
                     cropBox.position.x,
                     cropBox.position.y,

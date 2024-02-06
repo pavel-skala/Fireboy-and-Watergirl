@@ -1,5 +1,7 @@
-canvas.height = 36 * 29;
-canvas.width = 36 * 39;
+import { Sprite } from "./sprite.js";
+import { canvas, ctx, setContinueAnimation, setEndGame } from "./helpers.js";
+import { drawMenu } from "./menus.js";
+import { playGame } from "./game.js";
 
 //check collision for button in menu
 function checkButtonCollision(pos, button) {
@@ -53,23 +55,23 @@ class MenuButton {
         }
     }
     draw() {
-        (c.fillStyle = this.borderColor),
-            c.fillRect(this.position.x, this.position.y, this.width, this.height);
-        (c.fillStyle = this.mainColor),
-            c.fillRect(this.position.x + 2, this.position.y + 2, this.width - 4, this.height - 4);
+        (ctx.fillStyle = this.borderColor),
+            ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
+        (ctx.fillStyle = this.mainColor),
+            ctx.fillRect(this.position.x + 2, this.position.y + 2, this.width - 4, this.height - 4);
 
-        c.font = `${this.fontSize}px Cinzel`;
-        c.lineWidth = 7;
-        c.strokeStyle = "black";
-        c.strokeText(this.text, this.position.x + this.textGap, this.position.y + 80);
+        ctx.font = `${this.fontSize}px Cinzel`;
+        ctx.lineWidth = 7;
+        ctx.strokeStyle = "black";
+        ctx.strokeText(this.text, this.position.x + this.textGap, this.position.y + 80);
 
-        c.font = `${this.fontSize}px Cinzel`;
-        c.fillStyle = "yellow";
-        c.fillText(this.text, this.position.x + this.textGap, this.position.y + 80);
+        ctx.font = `${this.fontSize}px Cinzel`;
+        ctx.fillStyle = "yellow";
+        ctx.fillText(this.text, this.position.x + this.textGap, this.position.y + 80);
     }
     scaleDown() {
-        c.fillStyle = "#929292";
-        c.fillRect(this.position.x - 1, this.position.y - 1, this.width + 2, this.height + 2);
+        ctx.fillStyle = "#929292";
+        ctx.fillRect(this.position.x - 1, this.position.y - 1, this.width + 2, this.height + 2);
         this.position.x += 1;
         this.position.y += 1;
         this.width -= 2;
@@ -77,6 +79,7 @@ class MenuButton {
         this.fontSize -= 1;
     }
     resetSize() {
+        // this.position = this.originalValues.position tohle nefachá
         this.position.x = this.originalValues.position.x;
         this.position.y = this.originalValues.position.y;
         this.width = this.originalValues.width;
@@ -99,7 +102,7 @@ const pauseButton = new Sprite({
     imgSrc: "./res/img/pause_img.png",
 });
 
-const buttons = {
+const menuButtons = {
     lost: {
         menu: new MenuButton({
             position: {
@@ -125,7 +128,8 @@ const buttons = {
             yOffset: canvas.height * 0.4,
             text: "retry",
             runCode: () => {
-                playGame(currentLevel);
+                // playGame(currentLevel);
+                setEndGame(true);
             },
         }),
     },
@@ -141,7 +145,6 @@ const buttons = {
             yOffset: canvas.height * 0.3,
             text: "end",
             runCode: () => {
-                pauseGame = false;
                 drawMenu();
             },
         }),
@@ -156,8 +159,8 @@ const buttons = {
             yOffset: canvas.height * 0.3,
             text: "retry",
             runCode: () => {
-                pauseGame = false;
-                playGame(currentLevel);
+                // playGame(1)
+                setEndGame(true);
             },
         }),
 
@@ -171,9 +174,10 @@ const buttons = {
             yOffset: canvas.height * 0.45,
             text: "resume",
             runCode: () => {
-                pauseGame = false;
-                continueAnimation = true;
+                setContinueAnimation(true);
             },
         }),
     },
 };
+
+export { pauseButton, menuButtons, checkButtonCollision };

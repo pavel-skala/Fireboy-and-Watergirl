@@ -1,4 +1,8 @@
-class Player extends Sprite {
+import { Sprite } from "./sprite.js";
+import { ctx } from "./helpers.js";
+
+
+export class Player extends Sprite {
     constructor({
         position,
         collisionBlocks,
@@ -6,11 +10,11 @@ class Player extends Sprite {
         imgSrc,
         frameRate,
         frameDelay,
-        imgRows,
         currentRow,
-        animations,
+        imgRows,
         legs,
         keys,
+        animations,
         element,
     }) {
         super({ position, imgSrc, frameRate, frameDelay, currentRow, imgRows, animations });
@@ -107,6 +111,7 @@ class Player extends Sprite {
             else this.flipImage = false;
 
             this.currentAnimation = name;
+            
             if (name == "up" || name == "down") {
                 name = "idle";
             }

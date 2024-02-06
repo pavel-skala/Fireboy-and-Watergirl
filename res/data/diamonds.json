@@ -1,0 +1,60 @@
+{
+    "1": [
+        {
+            "position": {
+                "x": 360,
+                "y": 72
+            },
+            "element": "fire"
+        },
+        {
+            "position": {
+                "x": 72,
+                "y": 180
+            },
+            "element": "water"
+        },
+        {
+            "position": {
+                "x": 648,
+                "y": 144
+            },
+            "element": "fire"
+        },
+        {
+            "position": {
+                "x": 792,
+                "y": 144
+            },
+            "element": "water"
+        },
+        {
+            "position": {
+                "x": 252,
+                "y": 468
+            },
+            "element": "fire"
+        },
+        {
+            "position": {
+                "x": 828,
+                "y": 504
+            },
+            "element": "water"
+        },
+        {
+            "position": {
+                "x": 720,
+                "y": 936
+            },
+            "element": "fire"
+        },
+        {
+            "position": {
+                "x": 1008,
+                "y": 936
+            },
+            "element": "water"
+        }
+    ]
+}

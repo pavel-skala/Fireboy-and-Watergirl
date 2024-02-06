@@ -1,107 +1,78 @@
-const collisionsLevel1 = [
-    0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0,
-    0, 0, 0, 0, 0, 2, 1, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 1,
-    1, 3, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0,
-    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,
-    0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0,
-    0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 3, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0,
-    1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 1, 0, 0, 0, 0, 0, 1, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    4, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 4, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 4, 1, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 1, 1, 1, 1, 1, 1, 1, 13, 12, 12, 12, 14, 1, 1, 1, 1, 3, 0, 0,
-    0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 1, 5, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 7, 6, 6, 6, 8, 1, 1, 1,
-    10, 9, 9, 9, 11, 1, 1, 1, 1, 0, 0, 0, 0,
-];
+import { Sprite } from "./sprite.js";
+import * as Blocks from "./collisionBlocks.js";
+import { GAME_SIZE, ctx } from "./helpers.js";
 
 class CollisionBlock {
     constructor({ position, shape, direction, element }) {
         this.position = position;
         this.shape = shape;
         this.direction = direction;
-        this.height = 36;
-        this.width = 36;
         this.element = element;
+        this.width = 36;
+        this.height = 36;
+
+        this.hitbox = {
+            position,
+            width: this.width,
+            height: this.height,
+        };
     }
     draw() {
         if (this.shape == "square") {
-            c.fillStyle = "rgba(255,0,0,0.5)";
-            c.fillRect(this.position.x, this.position.y, this.width, this.height);
+            ctx.fillStyle = "rgba(255,0,0,0.5)";
+            ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
         } else if (this.shape == "triangle") {
-            c.fillStyle = "rgba(255, 251, 0, 0.575)";
+            ctx.fillStyle = "rgba(255, 251, 0, 0.575)";
             if (this.direction.x == "right" && this.direction.y == "up") {
-                c.beginPath();
-                c.moveTo(this.position.x, this.position.y);
-                c.lineTo(this.position.x, this.position.y + this.height);
-                c.lineTo(this.position.x + this.width, this.position.y + this.height);
-                c.fill();
+                ctx.beginPath();
+                ctx.moveTo(this.position.x, this.position.y);
+                ctx.lineTo(this.position.x, this.position.y + this.height);
+                ctx.lineTo(this.position.x + this.width, this.position.y + this.height);
+                ctx.fill();
             } else if (this.direction.x == "left" && this.direction.y == "up") {
-                c.beginPath();
-                c.moveTo(this.position.x + this.width, this.position.y);
-                c.lineTo(this.position.x, this.position.y + this.height);
-                c.lineTo(this.position.x + this.width, this.position.y + this.height);
-                c.fill();
+                ctx.beginPath();
+                ctx.moveTo(this.position.x + this.width, this.position.y);
+                ctx.lineTo(this.position.x, this.position.y + this.height);
+                ctx.lineTo(this.position.x + this.width, this.position.y + this.height);
+                ctx.fill();
             } else if (this.direction.x == "left" && this.direction.y == "down") {
-                c.beginPath();
-                c.moveTo(this.position.x, this.position.y);
-                c.lineTo(this.position.x + this.width, this.position.y);
-                c.lineTo(this.position.x + this.width, this.position.y + this.height);
-                c.fill();
+                ctx.beginPath();
+                ctx.moveTo(this.position.x, this.position.y);
+                ctx.lineTo(this.position.x + this.width, this.position.y);
+                ctx.lineTo(this.position.x + this.width, this.position.y + this.height);
+                ctx.fill();
             } else if (this.direction.x == "right" && this.direction.y == "down") {
-                c.beginPath();
-                c.moveTo(this.position.x, this.position.y);
-                c.lineTo(this.position.x + this.width, this.position.y);
-                c.lineTo(this.position.x, this.position.y + this.height);
-                c.fill();
+                ctx.beginPath();
+                ctx.moveTo(this.position.x, this.position.y);
+                ctx.lineTo(this.position.x + this.width, this.position.y);
+                ctx.lineTo(this.position.x, this.position.y + this.height);
+                ctx.fill();
             }
         } else if (this.shape == "pond") {
-            c.fillStyle = "rgba(0, 255, 0, 0.575)";
-            c.fillRect(this.position.x, this.position.y + 18, this.width, this.height - 18);
+            ctx.fillStyle = "rgba(255, 0, 242, 0.575)";
+            ctx.fillRect(this.position.x, this.position.y + 18, this.width, this.height - 18);
         } else if (this.shape == "pondTriangle") {
-            c.fillStyle = "rgba(0, 255, 0, 0.575)";
+            ctx.fillStyle = "rgba(255, 0, 242, 0.575)";
             if (this.direction.x == "left") {
-                c.beginPath();
-                c.moveTo(this.position.x + this.width, this.position.y);
-                c.lineTo(this.position.x + this.width, this.position.y + this.height);
-                c.lineTo(this.position.x, this.position.y + this.height);
-                c.lineTo(this.position.x, this.position.y + this.height / 2);
-                c.fill();
+                ctx.beginPath();
+                ctx.moveTo(this.position.x + this.width, this.position.y);
+                ctx.lineTo(this.position.x + this.width, this.position.y + this.height);
+                ctx.lineTo(this.position.x, this.position.y + this.height);
+                ctx.lineTo(this.position.x, this.position.y + this.height / 2);
+                ctx.fill();
             } else {
-                c.beginPath();
-                c.moveTo(this.position.x, this.position.y);
-                c.lineTo(this.position.x, this.position.y + this.height);
-                c.lineTo(this.position.x + this.width, this.position.y + this.height);
-                c.lineTo(this.position.x + this.width, this.position.y + this.height / 2);
-                c.fill();
+                ctx.beginPath();
+                ctx.moveTo(this.position.x, this.position.y);
+                ctx.lineTo(this.position.x, this.position.y + this.height);
+                ctx.lineTo(this.position.x + this.width, this.position.y + this.height);
+                ctx.lineTo(this.position.x + this.width, this.position.y + this.height / 2);
+                ctx.fill();
             }
         }
     }
 }
 
-function createObjectsFromArray(array) {
+export function createObjectsFromArray(array) {
     const objects = [];
     const ponds = [];
 
@@ -116,11 +87,11 @@ function createObjectsFromArray(array) {
         let currentRow;
 
         switch (array[i]) {
-            case 1:
+            case Blocks.BLOCK:
                 //square
                 shape = "square";
                 break;
-            case 2:
+            case Blocks.TRIANGLE_LEFT_UP:
                 //triangle to left
                 shape = "triangle";
                 direction = {
@@ -128,7 +99,7 @@ function createObjectsFromArray(array) {
                     y: "up",
                 };
                 break;
-            case 3:
+            case Blocks.TRIANGLE_RIGHT_UP:
                 //triangle to right
                 shape = "triangle";
                 direction = {
@@ -136,7 +107,7 @@ function createObjectsFromArray(array) {
                     y: "up",
                 };
                 break;
-            case 4:
+            case Blocks.TRIANGLE_LEFT_DOWN:
                 //triangle to left
                 shape = "triangle";
                 direction = {
@@ -144,7 +115,7 @@ function createObjectsFromArray(array) {
                     y: "down",
                 };
                 break;
-            case 5:
+            case Blocks.TRIANGLE_RIGHT_DOWN:
                 //triangle to right
                 shape = "triangle";
                 direction = {
@@ -152,72 +123,72 @@ function createObjectsFromArray(array) {
                     y: "down",
                 };
                 break;
-            case 6:
-            case 9:
-            case 12:
+            case Blocks.WATER_POND:
+            case Blocks.FIRE_POND:
+            case Blocks.ACID_POND:
                 shape = "pond";
                 break;
-            case 7:
-            case 10:
-            case 13:
+            case Blocks.WATER_POND_TRIANGLE_RIGHT:
+            case Blocks.FIRE_POND_TRIANGLE_RIGHT:
+            case Blocks.ACID_POND_TRIANGLE_RIGHT:
                 //pond triangle to right
                 shape = "pondTriangle";
                 direction = {
                     x: "right",
                     y: "up",
                 };
-                border = "border";
                 break;
-            case 8:
-            case 11:
-            case 14:
+            case Blocks.WATER_POND_TRIANGLE_LEFT:
+            case Blocks.FIRE_POND_TRIANGLE_LEFT:
+            case Blocks.ACID_POND_TRIANGLE_LEFT:
                 //pond triangle to left
                 shape = "pondTriangle";
                 direction = {
                     x: "left",
                     y: "up",
                 };
-                border = "border";
                 flipImage = true;
                 break;
         }
         switch (array[i]) {
-            case 6:
+            case Blocks.FIRE_POND:
                 element = "fire";
                 currentRow = 3;
                 break;
-            case 7:
-            case 8:
+            case Blocks.FIRE_POND_TRIANGLE_LEFT:
+            case Blocks.FIRE_POND_TRIANGLE_RIGHT:
                 element = "fire";
                 currentRow = 4;
                 break;
-            case 9:
+            case Blocks.WATER_POND:
                 currentRow = 1;
                 element = "water";
                 break;
-            case 10:
-            case 11:
+            case Blocks.WATER_POND_TRIANGLE_LEFT:
+            case Blocks.WATER_POND_TRIANGLE_RIGHT:
                 element = "water";
                 currentRow = 2;
                 break;
-            case 12:
+            case Blocks.ACID_POND:
                 element = "acid";
                 currentRow = 5;
                 break;
-            case 13:
-            case 14:
+            case Blocks.ACID_POND_TRIANGLE_LEFT:
+            case Blocks.ACID_POND_TRIANGLE_RIGHT:
                 element = "acid";
                 currentRow = 6;
                 break;
         }
 
-        if (6 <= array[i]) {
+        let newPosition = {
+            x: (i % GAME_SIZE.width) * GAME_SIZE.block.width,
+            y: Math.floor(i / GAME_SIZE.width) * GAME_SIZE.block.height,
+        };
+
+        if (array[i] >= Blocks.FIRE_POND_START_INDEX) {
             ponds.push(
                 new Sprite({
-                    position: {
-                        x: (i % 39) * 36,
-                        y: Math.floor(i / 39) * 36,
-                    },
+                    position: newPosition,
                     imgSrc: `./res/img/ponds.png`,
                     frameRate: 9,
                     imgRows: 6,
@@ -227,13 +198,10 @@ function createObjectsFromArray(array) {
             );
         }
 
-        if (array[i] !== 0) {
+        if (array[i] !== Blocks.EMPTY) {
             objects.push(
                 new CollisionBlock({
-                    position: {
-                        x: (i % 39) * 36,
-                        y: Math.floor(i / 39) * 36,
-                    },
+                    position: newPosition,
                     shape: shape,
                     direction: direction,
                     element: element,
@@ -242,5 +210,8 @@ function createObjectsFromArray(array) {
         }
     }
 
-    return [objects, ponds];
+    return {
+        objects,
+        ponds,
+    };
 }
