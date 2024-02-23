@@ -1,0 +1,35 @@
+{
+    "1": {
+        "buttons": [
+            {
+                "ramp": {
+                    "position": {
+                        "x": 1224,
+                        "y": 432
+                    },
+                    "boxCount": 4,
+                    "color": "#660066",
+                    "finalPosition": {
+                        "x": 1224,
+                        "y": 540
+                    },
+                    "finalColor": "#b300b3"
+                },
+                "buttons": [
+                    {
+                        "position": {
+                            "x": 360,
+                            "y": 522
+                        }
+                    },
+                    {
+                        "position": {
+                            "x": 1044,
+                            "y": 378
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

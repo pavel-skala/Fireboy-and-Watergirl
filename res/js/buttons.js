@@ -1,7 +1,6 @@
 import { Sprite } from "./sprite.js";
 import { canvas, ctx, setContinueAnimation, setEndGame } from "./helpers.js";
 import { drawMenu } from "./menus.js";
-import { playGame } from "./game.js";
 
 //check collision for button in menu
 function checkButtonCollision(pos, button) {

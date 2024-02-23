@@ -25,9 +25,6 @@ function getMousePos(event) {
     };
 }
 
-
-
-
 let continueAnimation = false;
 let endGame = false;
 let currentLevel = 1;
@@ -45,7 +42,7 @@ function setCurrentLevel(setValue) {
 }
 
 let gameData = {};
-const jsonsFiles = ["diamonds", "players"];
+const jsonsFiles = ["diamonds", "players", "assets"];
 
 async function loadData() {
     try {

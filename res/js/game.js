@@ -3,6 +3,8 @@ import { Sprite } from "./sprite.js";
 import { levels } from "./collisionBlocks.js";
 import { createObjectsFromArray } from "./collisions.js";
 import { Diamond } from "./classes/diamond.js";
+import { Button } from "./classes/button.js";
+import { Ramp } from "./classes/ramp.js";
 import { pauseButton, menuButtons, checkButtonCollision } from "./buttons.js";
 import {
     getMousePos,
@@ -17,8 +19,10 @@ import { drawMenuPause, drawMenuLost } from "./menus.js";
 
 let bgBlocks, menuActive, died, menuButtonPressed, pauseGame, collisionBlocks, ponds;
 
-let diamonds = [];
-let players = [];
+let blocksAssets = [];
+let allButtons = [];
+let allDiamonds = [];
+let allPlayers = [];
 
 const background = new Sprite({
     position: {
@@ -33,8 +37,11 @@ function startGame() {
     died = false;
     menuButtonPressed = null;
     pauseGame = false;
-    diamonds = [];
-    players = [];
+
+    blocksAssets = [];
+    allButtons = [];
+    allDiamonds = [];
+    allPlayers = [];
 
     const values = createObjectsFromArray(levels[currentLevel]);
     collisionBlocks = values.objects;
@@ -48,8 +55,9 @@ function startGame() {
         imgSrc: `./res/img/maps/blocks${currentLevel}.png`,
     });
 
+    //diamonds
     gameData["diamonds"][currentLevel].forEach((diamond) => {
-        diamonds.push(
+        allDiamonds.push(
             new Diamond({
                 position: diamond.position,
                 element: diamond.element,
@@ -57,14 +65,45 @@ function startGame() {
         );
     });
 
+    //buttons
+    gameData.assets[currentLevel].buttons.forEach((buttonGroup) => {
+        const color = buttonGroup.ramp.color;
+        const finalColor = buttonGroup.ramp.finalColor;
+
+        const ramp = new Ramp({
+            position: { ...buttonGroup.ramp.position },
+            boxCount: buttonGroup.ramp.boxCount,
+            color,
+            finalColor,
+            finalPosition: buttonGroup.ramp.finalPosition,
+        });
+        blocksAssets.push(ramp);
+
+        let groupButtons = [];
+
+        buttonGroup.buttons.forEach((button) => {
+            const newButton = new Button({
+                position: { ...button.position },
+                color,
+                finalColor,
+                ramp,
+            });
+            groupButtons.push(newButton);
+            blocksAssets.push(newButton);
+        });
+        allButtons.push(groupButtons);
+    });
+
+    //players
     for (const player in gameData.players) {
         const currentPlayer = gameData.players[player];
 
-        players.push(
+        allPlayers.push(
             new Player({
                 position: { ...currentPlayer[currentLevel].position },
                 collisionBlocks,
-                diamonds,
+                blocksAssets,
+                diamonds: allDiamonds,
                 imgSrc: currentPlayer.constants.imgSrc,
                 element: currentPlayer.constants.element,
                 frameRate: 1,
@@ -136,7 +175,7 @@ function startGame() {
 }
 
 export function playGame() {
-    startGame()
+    startGame();
 
     let now;
     let delta;
@@ -153,20 +192,67 @@ export function playGame() {
 
             background.draw();
 
-            players.forEach((player) => {
+            allPlayers.forEach((player) => {
                 player.checkDiamonds();
             });
 
-            diamonds.forEach((diamond) => {
+            allDiamonds.forEach((diamond) => {
                 diamond.draw();
             });
+
+            for (const buttons of allButtons) {
+                let movedRamp = false;
+                for (const button of buttons) {
+                    if (button.pressed) {
+                        if (button.position.y == button.finalPosition.y) {
+                            let standingOnButton = false;
+                            allPlayers.forEach((player) => {
+                                if (
+                                    player.isOnBlock &&
+                                    player.hitbox.legs.position.x + player.hitbox.legs.width >=
+                                        button.hitbox.position.x &&
+                                    player.hitbox.legs.position.x <=
+                                        button.hitbox.position.x + button.hitbox.width &&
+                                    player.hitbox.position.y + player.hitbox.height >=
+                                        button.hitbox.position.y - 2 &&
+                                    player.hitbox.position.y + player.hitbox.height <=
+                                        button.hitbox.position.y + button.hitbox.height
+                                ) {
+                                    // return
+                                    standingOnButton = true;
+                                }
+                            });
+                            if (!standingOnButton) {
+                                button.pressed = false;
+                                button.move("up");
+                            }
+                        } else {
+                            button.move("down");
+                        }
+                    } else {
+                        if (button.position.y != button.startPosition.y) {
+                            button.move("up");
+                        }
+                    }
+
+                    button.fillColor();
+                    button.draw();
+                    if (button.pressed && !movedRamp) {
+                        movedRamp = true;
+                        button.run();
+                    }
+                }
+                if (!movedRamp) {
+                    buttons[0].run();
+                }
+            }
 
             bgBlocks.draw();
             collisionBlocks.forEach((collisionBlock) => {
                 collisionBlock.draw();
             });
 
-            players.forEach((player) => {
+            allPlayers.forEach((player) => {
                 if (player.keys.pressed.left) {
                     player.velocity.x = -4;
                     player.changeSprite("left");
@@ -187,6 +273,18 @@ export function playGame() {
                 player.draw();
                 player.legs.draw();
                 player.update();
+
+                if (player.rampBlocked) {
+                    blocksAssets.forEach((blocksAsset) => {
+                        if (
+                            blocksAsset.hitbox.position.y ==
+                            Math.round(player.hitbox.position.y + player.hitbox.height)
+                        ) {
+                            blocksAsset.blocked = true;
+                            blocksAsset.blockedDirection = "up";
+                        }
+                    });
+                }
 
                 if (player.died) {
                     died = true;
@@ -220,14 +318,21 @@ export function playGame() {
 
     function drawAll() {
         background.draw();
-        diamonds.forEach((diamond) => {
+        allDiamonds.forEach((diamond) => {
             diamond.draw();
+        });
+        allButtons.forEach((buttonGroup) => {
+            buttonGroup.forEach((button) => {
+                button.fillColor();
+                button.draw();
+                button.ramp.draw(button.pressed);
+            });
         });
         bgBlocks.draw();
         collisionBlocks.forEach((collisionBlock) => {
             collisionBlock.draw();
         });
-        players.forEach((player) => {
+        allPlayers.forEach((player) => {
             player.draw();
             player.legs.draw();
         });
@@ -271,7 +376,7 @@ export function playGame() {
         if (!menuActive) {
             if (checkButtonCollision(mousePos, pauseButton)) {
                 pauseGame = true;
-                players.forEach((player) => {
+                allPlayers.forEach((player) => {
                     for (const key in player.keys.pressed) {
                         player.keys.pressed[key] = false;
                     }
@@ -329,10 +434,10 @@ export function playGame() {
 
     window.addEventListener("keydown", (event) => {
         if (pauseGame) return;
-        players.forEach((player) => {
+        allPlayers.forEach((player) => {
             switch (event.key) {
                 case player.keys.up:
-                    if (player.isOnBlock && !player.keys.pressed.up) {
+                    if (player.isOnBlock && !player.keys.pressed.up && !player.rampBlocked) {
                         player.velocity.y = -10;
                         player.keys.pressed.up = true;
                     }
@@ -350,7 +455,7 @@ export function playGame() {
     window.addEventListener("keyup", (event) => {
         if (pauseGame) return;
 
-        players.forEach((player) => {
+        allPlayers.forEach((player) => {
             switch (event.key) {
                 case player.keys.up:
                     player.keys.pressed.up = false;
