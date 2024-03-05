@@ -1,0 +1,25 @@
+{
+    "1": [
+        {
+            "lever": {
+                "position": {
+                    "x": 387,
+                    "y": 675
+                }
+            },
+            "ramp": {
+                "position": {
+                    "x": 36,
+                    "y": 540
+                },
+                "boxCount": 4,
+                "color": "#b8b800",
+                "finalPosition": {
+                    "x": 36,
+                    "y": 648
+                },
+                "finalColor": "yellow"
+            }
+        }
+    ]
+}

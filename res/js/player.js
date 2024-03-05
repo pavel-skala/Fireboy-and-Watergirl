@@ -195,7 +195,7 @@ export class Player extends Sprite {
                     break;
                 }
 
-                if (block.shape == "square" || block.shape == "button" || block.shape == "ramp") {
+                if (block.shape == "square" || block.shape == "ramp" || block.shape == "lever") {
                     //head collision
                     if (
                         this.hitbox.position.y + this.hitbox.height - this.hitbox.legs.height >=
@@ -205,15 +205,46 @@ export class Player extends Sprite {
                         !this.sliding.right &&
                         !this.sliding.left
                     ) {
+                        let moveTo;
+                        if (block.shape == "lever") {
+                            //pushing lever to left
+                            if (
+                                this.velocity.x < 0 &&
+                                Math.round(block.angle / (Math.PI / 180)) > -30
+                            ) {
+                                block.angle -= Math.PI / 180;
+                            }
+                            //pushing lever to right
+                            else if (
+                                this.velocity.x > 0 &&
+                                Math.round(block.angle / (Math.PI / 180)) < 30
+                            ) {
+                                block.angle += Math.PI / 180;
+                            }
+                            //lever pushing player to left
+                            else if (
+                                this.velocity.x == 0 &&
+                                this.hitbox.position.x <= block.hitbox.position.x
+                            ) {
+                                moveTo = "left";
+                            }
+                            //lever pushing player to right
+                            else if (
+                                this.velocity.x == 0 &&
+                                this.hitbox.position.x >= block.hitbox.position.x
+                            ) {
+                                moveTo = "right";
+                            }
+                        }
                         //player going to left
-                        if (this.velocity.x < 0) {
+                        if (this.velocity.x < 0 || moveTo == "right") {
                             const offset = this.hitbox.position.x - this.position.x;
                             this.position.x =
                                 block.hitbox.position.x + block.hitbox.width - offset + 0.01;
                             break;
                         }
                         //player going to right
-                        else if (this.velocity.x > 0) {
+                        else if (this.velocity.x > 0 || moveTo == "left") {
                             const offset =
                                 this.hitbox.position.x - this.position.x + this.hitbox.width;
                             this.position.x = block.hitbox.position.x - offset - 0.01;
@@ -395,7 +426,7 @@ export class Player extends Sprite {
                 this.hitbox.position.y <= block.hitbox.position.y + block.hitbox.height
             ) {
                 //collision for square
-                if (block.shape == "square" || block.shape == "button" || block.shape == "ramp") {
+                if (block.shape == "square" || block.shape == "ramp" || block.shape == "lever") {
                     //ramp is blocked
                     if (
                         this.isOnRamp &&
@@ -433,19 +464,14 @@ export class Player extends Sprite {
                         this.hitbox.position.y + this.hitbox.height - this.hitbox.legs.height >=
                             block.hitbox.position.y
                     ) {
-                        let value = 1;
-                        //on ramp player sliding faster
-                        if (block.shape == "ramp") {
-                            value = 3;
-                        }
                         //player going left
                         if (this.hitbox.position.x <= block.hitbox.position.x) {
-                            this.position.x -= value;
+                            this.position.x -= 3;
                             this.sliding.left = true;
                         }
                         //player going right
                         else {
-                            this.position.x += value;
+                            this.position.x += 3;
                             this.sliding.right = true;
                         }
                         break;
@@ -481,6 +507,15 @@ export class Player extends Sprite {
                         block.blocked = true;
                         block.blockedDirection = "down";
                         break;
+                    }
+                } else if (block.shape == "button") {
+                    if (
+                        this.hitbox.legs.position.x <
+                            block.hitbox.position.x + block.hitbox.width &&
+                        this.hitbox.legs.position.x + this.hitbox.legs.width >
+                            block.hitbox.position.x
+                    ) {
+                        block.pressed = true;
                     }
                 }
                 //collision for triangle left

@@ -11,7 +11,7 @@ export class Diamond extends Sprite {
         const imgRows = 2;
 
         super({ position, imgSrc, currentRow, imgRows });
-        this.position = position
+        this.position = position;
         this.element = element;
     }
 }

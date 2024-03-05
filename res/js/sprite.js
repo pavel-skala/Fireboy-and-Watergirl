@@ -50,11 +50,27 @@ export class Sprite {
 
             //run animations
             if (
-                this.animations &&
-                (this.currentAnimation == "left" || this.currentAnimation == "right")
+                this.currentAnimation == "left" ||
+                this.currentAnimation == "right" ||
+                this.shape == "lever"
             ) {
                 ctx.save();
-                if (this.flipImage) {
+                if (this.shape == "lever") {
+                    ctx.translate(this.position.x + cropBox.width / 2, this.centerPoint.y);
+                    ctx.rotate(this.angle);
+                    ctx.translate(-(this.position.x + cropBox.width / 2), -this.centerPoint.y);
+                    ctx.drawImage(
+                        this.image,
+                        cropBox.position.x,
+                        cropBox.position.y,
+                        cropBox.width,
+                        cropBox.height,
+                        this.position.x,
+                        this.position.y,
+                        cropBox.width,
+                        cropBox.height
+                    );
+                } else if (this.flipImage) {
                     ctx.translate(
                         this.position.x + cropBox.width / 2,
                         this.position.y + cropBox.height / 2

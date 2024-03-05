@@ -54,10 +54,10 @@ class MenuButton {
         }
     }
     draw() {
-        (ctx.fillStyle = this.borderColor),
-            ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
-        (ctx.fillStyle = this.mainColor),
-            ctx.fillRect(this.position.x + 2, this.position.y + 2, this.width - 4, this.height - 4);
+        ctx.fillStyle = this.borderColor;
+        ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
+        ctx.fillStyle = this.mainColor;
+        ctx.fillRect(this.position.x + 2, this.position.y + 2, this.width - 4, this.height - 4);
 
         ctx.font = `${this.fontSize}px Cinzel`;
         ctx.lineWidth = 7;
@@ -78,7 +78,6 @@ class MenuButton {
         this.fontSize -= 1;
     }
     resetSize() {
-        // this.position = this.originalValues.position tohle nefachá
         this.position.x = this.originalValues.position.x;
         this.position.y = this.originalValues.position.y;
         this.width = this.originalValues.width;
@@ -127,7 +126,6 @@ const menuButtons = {
             yOffset: canvas.height * 0.4,
             text: "retry",
             runCode: () => {
-                // playGame(currentLevel);
                 setEndGame(true);
             },
         }),
@@ -158,7 +156,6 @@ const menuButtons = {
             yOffset: canvas.height * 0.3,
             text: "retry",
             runCode: () => {
-                // playGame(1)
                 setEndGame(true);
             },
         }),

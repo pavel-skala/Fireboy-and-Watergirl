@@ -42,7 +42,7 @@ function setCurrentLevel(setValue) {
 }
 
 let gameData = {};
-const jsonsFiles = ["diamonds", "players", "assets"];
+const jsonsFiles = ["players", "diamonds", "buttons", "levers"];
 
 async function loadData() {
     try {

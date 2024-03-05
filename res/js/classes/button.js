@@ -18,10 +18,10 @@ export class Button extends Sprite {
 
         this.hitbox = {
             position: {
-                x: position.x + 18,
+                x: position.x,
                 y: position.y,
             },
-            width: 38,
+            width: 36 + 38,
             height: 18,
         };
         this.canMove = true;

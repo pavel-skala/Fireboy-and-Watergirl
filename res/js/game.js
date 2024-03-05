@@ -15,14 +15,16 @@ import {
     gameData,
     setEndGame,
 } from "./helpers.js";
-import { drawMenuPause, drawMenuLost } from "./menus.js";
+import { drawInGameMenu } from "./menus.js";
+import { Lever } from "./classes/lever.js";
 
 let bgBlocks, menuActive, died, menuButtonPressed, pauseGame, collisionBlocks, ponds;
 
 let blocksAssets = [];
-let allButtons = [];
-let allDiamonds = [];
 let allPlayers = [];
+let allDiamonds = [];
+let allButtons = [];
+let allLevers = [];
 
 const background = new Sprite({
     position: {
@@ -39,9 +41,10 @@ function startGame() {
     pauseGame = false;
 
     blocksAssets = [];
-    allButtons = [];
-    allDiamonds = [];
     allPlayers = [];
+    allDiamonds = [];
+    allButtons = [];
+    allLevers = [];
 
     const values = createObjectsFromArray(levels[currentLevel]);
     collisionBlocks = values.objects;
@@ -56,7 +59,7 @@ function startGame() {
     });
 
     //diamonds
-    gameData["diamonds"][currentLevel].forEach((diamond) => {
+    gameData.diamonds[currentLevel].forEach((diamond) => {
         allDiamonds.push(
             new Diamond({
                 position: diamond.position,
@@ -66,7 +69,7 @@ function startGame() {
     });
 
     //buttons
-    gameData.assets[currentLevel].buttons.forEach((buttonGroup) => {
+    gameData.buttons[currentLevel].forEach((buttonGroup) => {
         const color = buttonGroup.ramp.color;
         const finalColor = buttonGroup.ramp.finalColor;
 
@@ -92,6 +95,30 @@ function startGame() {
             blocksAssets.push(newButton);
         });
         allButtons.push(groupButtons);
+    });
+
+    //levers
+    gameData.levers[currentLevel].forEach((leverGroup) => {
+        const color = leverGroup.ramp.color;
+        const finalColor = leverGroup.ramp.finalColor;
+
+        const ramp = new Ramp({
+            position: { ...leverGroup.ramp.position },
+            boxCount: leverGroup.ramp.boxCount,
+            color,
+            finalColor,
+            finalPosition: leverGroup.ramp.finalPosition,
+        });
+        blocksAssets.push(ramp);
+
+        const lever = new Lever({
+            position: leverGroup.lever.position,
+            color,
+            finalColor,
+            ramp,
+        });
+        allLevers.push(lever);
+        blocksAssets.push(lever);
     });
 
     //players
@@ -252,6 +279,12 @@ export function playGame() {
                 collisionBlock.draw();
             });
 
+            allLevers.forEach((lever) => {
+                lever.checkAngle();
+                lever.drawLever();
+                lever.run();
+            });
+
             allPlayers.forEach((player) => {
                 if (player.keys.pressed.left) {
                     player.velocity.x = -4;
@@ -302,19 +335,13 @@ export function playGame() {
                 return;
             } else if (pauseGame) {
                 menuActive = "paused";
-                drawMenuAnimation(drawMenuPause);
+                drawMenuAnimation(menuActive, "up");
                 return;
             }
         }
         requestAnimationFrame(animation);
     }
     animation();
-
-    function endFunction() {
-        menuActive = "lost";
-
-        drawMenuAnimation(drawMenuLost);
-    }
 
     function drawAll() {
         background.draw();
@@ -332,6 +359,10 @@ export function playGame() {
         collisionBlocks.forEach((collisionBlock) => {
             collisionBlock.draw();
         });
+        allLevers.forEach((lever) => {
+            lever.drawLever();
+            lever.ramp.draw();
+        });
         allPlayers.forEach((player) => {
             player.draw();
             player.legs.draw();
@@ -342,16 +373,32 @@ export function playGame() {
         pauseButton.draw();
     }
 
-    function drawMenuAnimation(name) {
+    function endFunction(status) {
+        menuActive = status;
+
+        drawMenuAnimation(status, "up");
+    }
+
+    function drawMenuAnimation(menuName, direction) {
         let transform = 1000;
+        let value = 10;
+        if (direction == "down") {
+            transform = 0;
+            value = -10;
+        }
+        const endTransform = Math.abs(transform - 1000);
 
         const menuAnimation = setInterval(() => {
             drawAll();
 
-            name(transform);
-            transform -= 10;
-            if (transform < 0) {
+            transform -= value;
+            drawInGameMenu(menuName, transform);
+            if (transform == endTransform) {
                 clearInterval(menuAnimation);
+                if (direction == "down") {
+                    animation();
+                    setContinueAnimation(false);
+                }
             }
         }, 1);
     }
@@ -400,18 +447,7 @@ export function playGame() {
                     pauseGame = false;
 
                     if (continueAnimation) {
-                        let transform = 0;
-                        const menuAnimation = setInterval(() => {
-                            drawAll();
-
-                            drawMenuPause(transform);
-                            transform += 10;
-                            if (transform >= 1000) {
-                                clearInterval(menuAnimation);
-                                animation();
-                                setContinueAnimation(false);
-                            }
-                        }, 1);
+                        drawMenuAnimation(menuActive, "down");
                     }
                     if (endGame) {
                         setEndGame(false);
@@ -438,7 +474,7 @@ export function playGame() {
             switch (event.key) {
                 case player.keys.up:
                     if (player.isOnBlock && !player.keys.pressed.up && !player.rampBlocked) {
-                        player.velocity.y = -10;
+                        player.velocity.y = -11;
                         player.keys.pressed.up = true;
                     }
                     break;
