@@ -17,6 +17,7 @@ import {
 } from "./helpers.js";
 import { drawInGameMenu } from "./menus.js";
 import { Lever } from "./classes/lever.js";
+import { Cube } from "./classes/cube.js";
 
 let bgBlocks, menuActive, died, menuButtonPressed, pauseGame, collisionBlocks, ponds;
 
@@ -25,6 +26,7 @@ let allPlayers = [];
 let allDiamonds = [];
 let allButtons = [];
 let allLevers = [];
+let allCubes = [];
 
 const background = new Sprite({
     position: {
@@ -45,6 +47,7 @@ function startGame() {
     allDiamonds = [];
     allButtons = [];
     allLevers = [];
+    allCubes = [];
 
     const values = createObjectsFromArray(levels[currentLevel]);
     collisionBlocks = values.objects;
@@ -120,6 +123,20 @@ function startGame() {
         allLevers.push(lever);
         blocksAssets.push(lever);
     });
+
+    //cubes
+    if (gameData.cubes[currentLevel]) {
+        gameData.cubes[currentLevel].forEach((cube) => {
+            const newCube = new Cube({
+                position: cube.position,
+                collisionBlocks,
+                blocksAssets,
+                players: allPlayers,
+            });
+            allCubes.push(newCube);
+            blocksAssets.push(newCube);
+        });
+    }
 
     //players
     for (const player in gameData.players) {
@@ -249,6 +266,21 @@ export function playGame() {
                                     standingOnButton = true;
                                 }
                             });
+                            allCubes.forEach((cube) => {
+                                if (
+                                    cube.isOnBlock &&
+                                    cube.hitbox.position.x + cube.hitbox.width >=
+                                        button.hitbox.position.x &&
+                                    cube.hitbox.position.x <=
+                                        button.hitbox.position.x + button.hitbox.width &&
+                                    cube.hitbox.position.y + cube.hitbox.height >=
+                                        button.hitbox.position.y - 2 &&
+                                    cube.hitbox.position.y + cube.hitbox.height <=
+                                        button.hitbox.position.y + button.hitbox.height
+                                ) {
+                                    standingOnButton = true;
+                                }
+                            });
                             if (!standingOnButton) {
                                 button.pressed = false;
                                 button.move("up");
@@ -279,6 +311,22 @@ export function playGame() {
                 collisionBlock.draw();
             });
 
+            allCubes.forEach((cube) => {
+                cube.draw();
+                cube.update();
+                if (cube.rampBlocked) {
+                    blocksAssets.forEach((blocksAsset) => {
+                        if (
+                            blocksAsset.hitbox.position.y ==
+                            Math.round(cube.hitbox.position.y + cube.hitbox.height)
+                        ) {
+                            blocksAsset.blocked = true;
+                            blocksAsset.blockedDirection = "up";
+                        }
+                    });
+                }
+            });
+
             allLevers.forEach((lever) => {
                 lever.checkAngle();
                 lever.drawLever();
@@ -287,10 +335,10 @@ export function playGame() {
 
             allPlayers.forEach((player) => {
                 if (player.keys.pressed.left) {
-                    player.velocity.x = -4;
+                    player.velocity.x = -2;
                     player.changeSprite("left");
                 } else if (player.keys.pressed.right) {
-                    player.velocity.x = 4;
+                    player.velocity.x = 2;
                     player.changeSprite("right");
                 } else {
                     player.velocity.x = 0;
@@ -331,7 +379,7 @@ export function playGame() {
             pauseButton.draw();
 
             if (died) {
-                endFunction();
+                endFunction("lost");
                 return;
             } else if (pauseGame) {
                 menuActive = "paused";
@@ -359,6 +407,9 @@ export function playGame() {
         collisionBlocks.forEach((collisionBlock) => {
             collisionBlock.draw();
         });
+        allCubes.forEach((cube) => {
+            cube.draw();
+        });
         allLevers.forEach((lever) => {
             lever.drawLever();
             lever.ramp.draw();
@@ -375,7 +426,7 @@ export function playGame() {
 
     function endFunction(status) {
         menuActive = status;
-
+        console.log(status);
         drawMenuAnimation(status, "up");
     }
 
@@ -474,7 +525,7 @@ export function playGame() {
             switch (event.key) {
                 case player.keys.up:
                     if (player.isOnBlock && !player.keys.pressed.up && !player.rampBlocked) {
-                        player.velocity.y = -11;
+                        player.velocity.y = -4;
                         player.keys.pressed.up = true;
                     }
                     break;

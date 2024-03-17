@@ -34,7 +34,7 @@ const menusTexts = {
 function drawInGameMenu(name, transform) {
     menuBg.position.y += transform;
     menuBg.draw();
-
+    console.log(name);
     menusTexts[name]();
 
     for (const btnName in menuButtons[name]) {

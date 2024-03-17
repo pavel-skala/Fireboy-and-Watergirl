@@ -69,20 +69,20 @@ export class Player extends Sprite {
         this.hitboxPositionCalc();
         this.lastPosition = this.hitbox.position;
 
-        ctx.fillStyle = "rgba(0,0,255,0.5)";
-        ctx.fillRect(
-            this.hitbox.position.x,
-            this.hitbox.position.y,
-            this.hitbox.width,
-            this.hitbox.height - this.hitbox.legs.height
-        );
-        ctx.fillStyle = "rgba(0,255,0, 0.5)";
-        ctx.fillRect(
-            this.hitbox.legs.position.x,
-            this.hitbox.legs.position.y,
-            this.hitbox.legs.width,
-            this.hitbox.legs.height
-        );
+        // ctx.fillStyle = "rgba(0,0,255,0.5)";
+        // ctx.fillRect(
+        //     this.hitbox.position.x,
+        //     this.hitbox.position.y,
+        //     this.hitbox.width,
+        //     this.hitbox.height - this.hitbox.legs.height
+        // );
+        // ctx.fillStyle = "rgba(0,255,0, 0.5)";
+        // ctx.fillRect(
+        //     this.hitbox.legs.position.x,
+        //     this.hitbox.legs.position.y,
+        //     this.hitbox.legs.width,
+        //     this.hitbox.legs.height
+        // );
 
         this.position.x += this.velocity.x;
 
@@ -177,7 +177,24 @@ export class Player extends Sprite {
         };
     }
     gravity() {
-        this.velocity.y += 0.5;
+        // this.velocity.y += 0.5;
+        if (this.velocity.y < 0) {
+            this.velocity.y += 0.07;
+            if (this.velocity.y > -0.001) {
+                this.velocity.y = 0;
+            }
+        } else if (this.velocity.y > 0) {
+            if (this.velocity.y >= 1.6) {
+                // this.velocity.y = 1.7
+                this.velocity.y += 0.02;
+            } else {
+                this.velocity.y += 0.07;
+                // this.velocity.y += 1
+            }
+        }
+        // else if (this.velocity.y == 0) this.velocity.y = 1.7;
+        else this.velocity.y = 2.02;
+        // this.velocity.y += 0.08;
         this.position.y += this.velocity.y;
     }
     horizontalCollision(blocks) {
@@ -195,7 +212,12 @@ export class Player extends Sprite {
                     break;
                 }
 
-                if (block.shape == "square" || block.shape == "ramp" || block.shape == "lever") {
+                if (
+                    block.shape == "square" ||
+                    block.shape == "ramp" ||
+                    block.shape == "lever" ||
+                    block.shape == "cube"
+                ) {
                     //head collision
                     if (
                         this.hitbox.position.y + this.hitbox.height - this.hitbox.legs.height >=
@@ -235,6 +257,12 @@ export class Player extends Sprite {
                             ) {
                                 moveTo = "right";
                             }
+                        } else if (block.shape == "cube") {
+                            if (this.velocity.x > 0) {
+                                block.velocity.x = 1.5;
+                            } else {
+                                block.velocity.x = -1.5;
+                            }
                         }
                         //player going to left
                         if (this.velocity.x < 0 || moveTo == "right") {
@@ -260,6 +288,13 @@ export class Player extends Sprite {
                             block.hitbox.position.y &&
                         this.hitbox.legs.position.y <= block.hitbox.position.y + block.hitbox.height
                     ) {
+                        if (block.shape == "cube") {
+                            if (this.velocity.x > 0) {
+                                block.velocity.x = 1.5;
+                            } else {
+                                block.velocity.x = -1.5;
+                            }
+                        }
                         //player going to left
                         if (
                             this.velocity.x < 0 &&
@@ -426,7 +461,12 @@ export class Player extends Sprite {
                 this.hitbox.position.y <= block.hitbox.position.y + block.hitbox.height
             ) {
                 //collision for square
-                if (block.shape == "square" || block.shape == "ramp" || block.shape == "lever") {
+                if (
+                    block.shape == "square" ||
+                    block.shape == "ramp" ||
+                    block.shape == "lever" ||
+                    block.shape == "cube"
+                ) {
                     //ramp is blocked
                     if (
                         this.isOnRamp &&
