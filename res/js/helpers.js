@@ -28,6 +28,7 @@ function getMousePos(event) {
 let continueAnimation = false;
 let endGame = false;
 let currentLevel = 1;
+let menuActive = "mainMenu";
 
 function setContinueAnimation(setValue) {
     continueAnimation = setValue;
@@ -41,8 +42,12 @@ function setCurrentLevel(setValue) {
     currentLevel = setValue;
 }
 
+function setMenuActive(setValue) {
+    menuActive = setValue;
+}
+
 let gameData = {};
-const jsonsFiles = ["players", "diamonds", "buttons", "levers", "cubes"];
+const jsonsFiles = ["players", "diamonds", "buttons", "levers", "cubes", "doors"];
 
 async function loadData() {
     try {
@@ -68,6 +73,8 @@ export {
     setEndGame,
     currentLevel,
     setCurrentLevel,
+    menuActive,
+    setMenuActive,
     loadData,
     gameData,
 };

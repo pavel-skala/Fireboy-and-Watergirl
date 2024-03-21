@@ -1,5 +1,5 @@
 import { Sprite } from "./sprite.js";
-import { canvas, ctx, setContinueAnimation, setEndGame } from "./helpers.js";
+import { canvas, ctx, setContinueAnimation, setEndGame, setMenuActive } from "./helpers.js";
 import { drawMenu } from "./menus.js";
 
 //check collision for button in menu
@@ -51,6 +51,11 @@ class MenuButton {
             case 6:
                 this.textGap = 10;
                 break;
+            case 8:
+                this.textGap = 30;
+                break;
+            case 10:
+                this.textGap = 20;
         }
     }
     draw() {
@@ -112,6 +117,7 @@ const menuButtons = {
             yOffset: canvas.height * 0.4,
             text: "menu",
             runCode: () => {
+                setMenuActive("mainMenu");
                 drawMenu();
             },
         }),
@@ -142,6 +148,7 @@ const menuButtons = {
             yOffset: canvas.height * 0.3,
             text: "end",
             runCode: () => {
+                setMenuActive("mainMenu");
                 drawMenu();
             },
         }),
@@ -171,6 +178,22 @@ const menuButtons = {
             text: "resume",
             runCode: () => {
                 setContinueAnimation(true);
+            },
+        }),
+    },
+    won: {
+        continue: new MenuButton({
+            position: {
+                x: canvas.width * 0.2 + 450 / 2,
+                y: canvas.height * 0.63,
+            },
+            width: 450,
+            height: canvas.height * 0.1,
+            yOffset: canvas.height * 0.43,
+            text: "continue",
+            runCode: () => {
+                setMenuActive("mainMenu");
+                drawMenu();
             },
         }),
     },

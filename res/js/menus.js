@@ -1,6 +1,7 @@
 import { Sprite } from "./sprite.js";
 import { menuButtons } from "./buttons.js";
 import { canvas, ctx } from "./helpers.js";
+import { quests } from "./game.js";
 
 const menuBg = new Sprite({
     position: {
@@ -29,12 +30,18 @@ const menusTexts = {
         ctx.fillStyle = "yellow";
         ctx.fillText("Paused", canvas.width * 0.35, menuBg.position.y + canvas.height * 0.25);
     },
+    won: () => {
+        quests.forEach((quest) => {
+            quest.updatePositionY(menuBg.position.y);
+            quest.draw();
+        });
+    },
 };
 
 function drawInGameMenu(name, transform) {
     menuBg.position.y += transform;
     menuBg.draw();
-    console.log(name);
+    
     menusTexts[name]();
 
     for (const btnName in menuButtons[name]) {

@@ -10,6 +10,8 @@ export class Sprite {
         imgRows = 1,
         currentRow = 1,
         frameDelay = 4,
+        shape,
+        angle = null,
     }) {
         this.position = position;
         this.image = new Image();
@@ -35,7 +37,10 @@ export class Sprite {
         }
 
         this.animations = animations;
-        this.angle = null;
+        this.angle = angle;
+        this.shape = shape;
+
+        this.opacity = 1;
     }
     draw() {
         if (this.loaded) {
@@ -47,6 +52,8 @@ export class Sprite {
                 width: this.width / this.frameRate,
                 height: this.height,
             };
+
+            ctx.globalAlpha = this.opacity;
 
             //run animations
             if (
@@ -158,8 +165,16 @@ export class Sprite {
                 );
             }
 
+            ctx.globalAlpha = 1;
+
             this.frameCount++;
             if (this.frameCount == this.frameDelay) {
+                if (this.constructor.name == "Door") {
+                    this.openDoor();
+                    this.frameCount = 0;
+                    return;
+                }
+
                 this.currentFrame++;
 
                 if (this.currentFrame == this.frameRate) {

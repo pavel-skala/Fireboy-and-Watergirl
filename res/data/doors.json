@@ -1,0 +1,18 @@
+{
+    "1": [
+        {
+            "position": {
+                "x": 1116,
+                "y": 108
+            },
+            "element": "fire"
+        },
+        {
+            "position": {
+                "x": 1224,
+                "y": 108
+            },
+            "element": "water"
+        }
+    ]
+}

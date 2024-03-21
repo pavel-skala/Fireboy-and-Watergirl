@@ -7,6 +7,7 @@ export class Player extends Sprite {
         collisionBlocks,
         blocksAssets,
         diamonds,
+        doors,
         imgSrc,
         frameRate,
         frameDelay,
@@ -29,6 +30,7 @@ export class Player extends Sprite {
         this.collisionBlocks = collisionBlocks;
         this.blocksAssets = blocksAssets;
         this.diamonds = diamonds;
+        this.doors = doors
 
         this.isOnBlock = false;
 
@@ -155,6 +157,22 @@ export class Player extends Sprite {
                 this.diamonds.splice(i, 1);
             }
         }
+    }
+    checkDoors() {
+        this.doors.forEach((door) => {
+            if (
+                this.element == door.element &&
+                this.hitbox.position.x >= door.hitbox.position.x &&
+                this.hitbox.position.x + this.hitbox.width <=
+                    door.hitbox.position.x + door.hitbox.width &&
+                this.hitbox.position.y >= door.hitbox.position.y &&
+                this.hitbox.position.y + this.hitbox.height <=
+                    door.hitbox.position.y + door.hitbox.height
+            ) {
+                door.pressed = true;
+                return;
+            }
+        });
     }
     calculateAngle() {
         this.angle =

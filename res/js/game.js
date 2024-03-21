@@ -14,12 +14,16 @@ import {
     currentLevel,
     gameData,
     setEndGame,
+    menuActive,
+    setMenuActive,
 } from "./helpers.js";
 import { drawInGameMenu } from "./menus.js";
 import { Lever } from "./classes/lever.js";
 import { Cube } from "./classes/cube.js";
+import { Door } from "./classes/door.js";
+import { Quest } from "./quests.js";
 
-let bgBlocks, menuActive, died, menuButtonPressed, pauseGame, collisionBlocks, ponds;
+let bgBlocks, died, menuButtonPressed, pauseGame, collisionBlocks, ponds;
 
 let blocksAssets = [];
 let allPlayers = [];
@@ -27,6 +31,9 @@ let allDiamonds = [];
 let allButtons = [];
 let allLevers = [];
 let allCubes = [];
+let allDoors = [];
+
+let levelCompleted = false;
 
 const background = new Sprite({
     position: {
@@ -36,8 +43,43 @@ const background = new Sprite({
     imgSrc: `./res/img/maps/bg.png`,
 });
 
+let quests = [];
+quests.push(
+    new Quest({
+        position: {
+            x: 450,
+            y: 500,
+        },
+        offsetY: 220,
+        currentRow: 1,
+        requirement: {
+            variable: levelCompleted,
+            getVariable: () => {
+                return levelCompleted;
+            },
+            required: true,
+        },
+    })
+);
+quests.push(
+    new Quest({
+        position: {
+            x: 450,
+            y: 600,
+        },
+        offsetY: 350,
+        currentRow: 2,
+        requirement: {
+            variable: allDiamonds,
+            getVariable: () => {
+                return allDiamonds;
+            },
+            required: [],
+        },
+    })
+);
+
 function startGame() {
-    menuActive = null;
     died = false;
     menuButtonPressed = null;
     pauseGame = false;
@@ -48,6 +90,7 @@ function startGame() {
     allButtons = [];
     allLevers = [];
     allCubes = [];
+    allDoors = [];
 
     const values = createObjectsFromArray(levels[currentLevel]);
     collisionBlocks = values.objects;
@@ -72,63 +115,69 @@ function startGame() {
     });
 
     //buttons
-    gameData.buttons[currentLevel].forEach((buttonGroup) => {
-        const color = buttonGroup.ramp.color;
-        const finalColor = buttonGroup.ramp.finalColor;
+    if (gameData.buttons[currentLevel]) {
+        gameData.buttons[currentLevel].forEach((buttonGroup) => {
+            const color = buttonGroup.ramp.color;
+            const finalColor = buttonGroup.ramp.finalColor;
 
-        const ramp = new Ramp({
-            position: { ...buttonGroup.ramp.position },
-            boxCount: buttonGroup.ramp.boxCount,
-            color,
-            finalColor,
-            finalPosition: buttonGroup.ramp.finalPosition,
+            const ramp = new Ramp({
+                position: { ...buttonGroup.ramp.position },
+                boxCount: buttonGroup.ramp.boxCount,
+                color,
+                finalColor,
+                finalPosition: buttonGroup.ramp.finalPosition,
+                rotated: buttonGroup.ramp.rotated,
+            });
+            blocksAssets.push(ramp);
+
+            let groupButtons = [];
+
+            buttonGroup.buttons.forEach((button) => {
+                const newButton = new Button({
+                    position: { ...button.position },
+                    color,
+                    finalColor,
+                    ramp,
+                });
+                groupButtons.push(newButton);
+                blocksAssets.push(newButton);
+            });
+            allButtons.push(groupButtons);
         });
-        blocksAssets.push(ramp);
+    }
 
-        let groupButtons = [];
+    //levers
+    if (gameData.levers[currentLevel]) {
+        gameData.levers[currentLevel].forEach((leverGroup) => {
+            const color = leverGroup.ramp.color;
+            const finalColor = leverGroup.ramp.finalColor;
 
-        buttonGroup.buttons.forEach((button) => {
-            const newButton = new Button({
-                position: { ...button.position },
+            const ramp = new Ramp({
+                position: { ...leverGroup.ramp.position },
+                boxCount: leverGroup.ramp.boxCount,
+                color,
+                finalColor,
+                finalPosition: leverGroup.ramp.finalPosition,
+                rotated: leverGroup.ramp.rotated,
+            });
+            blocksAssets.push(ramp);
+
+            const lever = new Lever({
+                position: leverGroup.lever.position,
                 color,
                 finalColor,
                 ramp,
             });
-            groupButtons.push(newButton);
-            blocksAssets.push(newButton);
+            allLevers.push(lever);
+            blocksAssets.push(lever);
         });
-        allButtons.push(groupButtons);
-    });
-
-    //levers
-    gameData.levers[currentLevel].forEach((leverGroup) => {
-        const color = leverGroup.ramp.color;
-        const finalColor = leverGroup.ramp.finalColor;
-
-        const ramp = new Ramp({
-            position: { ...leverGroup.ramp.position },
-            boxCount: leverGroup.ramp.boxCount,
-            color,
-            finalColor,
-            finalPosition: leverGroup.ramp.finalPosition,
-        });
-        blocksAssets.push(ramp);
-
-        const lever = new Lever({
-            position: leverGroup.lever.position,
-            color,
-            finalColor,
-            ramp,
-        });
-        allLevers.push(lever);
-        blocksAssets.push(lever);
-    });
+    }
 
     //cubes
     if (gameData.cubes[currentLevel]) {
         gameData.cubes[currentLevel].forEach((cube) => {
             const newCube = new Cube({
-                position: cube.position,
+                position: { ...cube.position },
                 collisionBlocks,
                 blocksAssets,
                 players: allPlayers,
@@ -137,6 +186,15 @@ function startGame() {
             blocksAssets.push(newCube);
         });
     }
+
+    //doors
+    gameData.doors[currentLevel].forEach((door) => {
+        const newDoor = new Door({
+            position: door.position,
+            element: door.element,
+        });
+        allDoors.push(newDoor);
+    });
 
     //players
     for (const player in gameData.players) {
@@ -148,6 +206,7 @@ function startGame() {
                 collisionBlocks,
                 blocksAssets,
                 diamonds: allDiamonds,
+                doors: allDoors,
                 imgSrc: currentPlayer.constants.imgSrc,
                 element: currentPlayer.constants.element,
                 frameRate: 1,
@@ -218,7 +277,7 @@ function startGame() {
     }
 }
 
-export function playGame() {
+function playGame() {
     startGame();
 
     let now;
@@ -327,6 +386,11 @@ export function playGame() {
                 }
             });
 
+            allDoors.forEach((door) => {
+                door.draw();
+                door.pressed = false;
+            });
+
             allLevers.forEach((lever) => {
                 lever.checkAngle();
                 lever.drawLever();
@@ -367,6 +431,8 @@ export function playGame() {
                     });
                 }
 
+                player.checkDoors();
+
                 if (player.died) {
                     died = true;
                 }
@@ -376,13 +442,20 @@ export function playGame() {
                 pond.draw();
             });
 
+            //both doors opened
+            if (allDoors[0].opened == true && allDoors[1].opened == true) {
+                levelCompleted = true;
+                playersDissapearing();
+                return;
+            }
+
             pauseButton.draw();
 
             if (died) {
                 endFunction("lost");
                 return;
             } else if (pauseGame) {
-                menuActive = "paused";
+                setMenuActive("paused");
                 drawMenuAnimation(menuActive, "up");
                 return;
             }
@@ -410,6 +483,9 @@ export function playGame() {
         allCubes.forEach((cube) => {
             cube.draw();
         });
+        allDoors.forEach((door) => {
+            door.draw();
+        });
         allLevers.forEach((lever) => {
             lever.drawLever();
             lever.ramp.draw();
@@ -424,9 +500,39 @@ export function playGame() {
         pauseButton.draw();
     }
 
+    function playersDissapearing() {
+        let opacity = 1;
+        const dissapearing = setInterval(() => {
+            opacity -= 0.05;
+            if (opacity <= 0) {
+                opacity = 0;
+                clearInterval(dissapearing);
+                let questCount = 0;
+                quests.forEach((quest) => {
+                    quest.setVariable();
+                    quest.check();
+                    if (quest.completed) {
+                        questCount++;
+                    }
+                });
+                
+                endFunction("won");
+            }
+            allDoors.forEach((door) => {
+                door.draw();
+            });
+            allPlayers.forEach((player) => {
+                player.opacity = opacity;
+                player.draw();
+                player.legs.opacity = opacity;
+                player.legs.draw();
+            });
+        }, 50);
+    }
+
     function endFunction(status) {
-        menuActive = status;
-        console.log(status);
+        setMenuActive(status);
+
         drawMenuAnimation(status, "up");
     }
 
@@ -505,7 +611,9 @@ export function playGame() {
                         startGame();
                         animation();
                     }
-                    menuActive = null;
+                    if (menuActive != "mainMenu") {
+                        setMenuActive(null);
+                    }
                     menuButtonPressed = null;
                 }, 200);
                 return;
@@ -557,3 +665,5 @@ export function playGame() {
         });
     });
 }
+
+export { playGame, quests };
