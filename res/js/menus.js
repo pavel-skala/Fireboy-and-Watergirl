@@ -2,6 +2,7 @@ import { Sprite } from "./sprite.js";
 import { menuButtons } from "./buttons.js";
 import { canvas, ctx } from "./helpers.js";
 import { quests } from "./game.js";
+import { levelTime } from "./time.js";
 
 const menuBg = new Sprite({
     position: {
@@ -31,6 +32,17 @@ const menusTexts = {
         ctx.fillText("Paused", canvas.width * 0.35, menuBg.position.y + canvas.height * 0.25);
     },
     won: () => {
+        const fullText = "Time : " + levelTime.minutes + ":" + levelTime.seconds;
+        //time
+        ctx.font = "50px Cinzel";
+        ctx.lineWidth = 7;
+        ctx.strokeStyle = "black";
+        ctx.strokeText(fullText, 600, menuBg.position.y + 160);
+
+        ctx.fillStyle = "yellow";
+        ctx.fillText(fullText, 600, menuBg.position.y + 160);
+
+
         quests.forEach((quest) => {
             quest.updatePositionY(menuBg.position.y);
             quest.draw();

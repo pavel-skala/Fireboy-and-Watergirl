@@ -5,7 +5,7 @@ export class Player extends Sprite {
     constructor({
         position,
         collisionBlocks,
-        blocksAssets,
+        allAssets,
         diamonds,
         doors,
         imgSrc,
@@ -28,7 +28,7 @@ export class Player extends Sprite {
         this.element = element;
 
         this.collisionBlocks = collisionBlocks;
-        this.blocksAssets = blocksAssets;
+        this.allAssets = allAssets;
         this.diamonds = diamonds;
         this.doors = doors
 
@@ -89,7 +89,7 @@ export class Player extends Sprite {
         this.position.x += this.velocity.x;
 
         this.hitboxPositionCalc();
-        this.horizontalCollision(this.blocksAssets);
+        this.horizontalCollision(this.allAssets);
 
         this.hitboxPositionCalc();
         this.horizontalCollision(this.collisionBlocks);
@@ -106,7 +106,7 @@ export class Player extends Sprite {
 
         this.hitboxPositionCalc();
         this.isOnRamp = false;
-        this.verticalCollision(this.blocksAssets);
+        this.verticalCollision(this.allAssets);
 
         this.hitboxPositionCalc();
         this.calculateAngle();

@@ -22,10 +22,11 @@ import { Lever } from "./classes/lever.js";
 import { Cube } from "./classes/cube.js";
 import { Door } from "./classes/door.js";
 import { Quest } from "./quests.js";
+import { drawTime, formatTime, levelTime } from "./time.js";
 
 let bgBlocks, died, menuButtonPressed, pauseGame, collisionBlocks, ponds;
 
-let blocksAssets = [];
+let allAssets = [];
 let allPlayers = [];
 let allDiamonds = [];
 let allButtons = [];
@@ -34,6 +35,10 @@ let allCubes = [];
 let allDoors = [];
 
 let levelCompleted = false;
+
+let startedTime;
+let pausedTime = 0;
+let pausedStartTime;
 
 const background = new Sprite({
     position: {
@@ -84,13 +89,16 @@ function startGame() {
     menuButtonPressed = null;
     pauseGame = false;
 
-    blocksAssets = [];
+    allAssets = [];
     allPlayers = [];
     allDiamonds = [];
     allButtons = [];
     allLevers = [];
     allCubes = [];
     allDoors = [];
+
+    levelCompleted = false;
+    startedTime = Date.now();
 
     const values = createObjectsFromArray(levels[currentLevel]);
     collisionBlocks = values.objects;
@@ -128,7 +136,7 @@ function startGame() {
                 finalPosition: buttonGroup.ramp.finalPosition,
                 rotated: buttonGroup.ramp.rotated,
             });
-            blocksAssets.push(ramp);
+            allAssets.push(ramp);
 
             let groupButtons = [];
 
@@ -140,7 +148,7 @@ function startGame() {
                     ramp,
                 });
                 groupButtons.push(newButton);
-                blocksAssets.push(newButton);
+                allAssets.push(newButton);
             });
             allButtons.push(groupButtons);
         });
@@ -160,7 +168,7 @@ function startGame() {
                 finalPosition: leverGroup.ramp.finalPosition,
                 rotated: leverGroup.ramp.rotated,
             });
-            blocksAssets.push(ramp);
+            allAssets.push(ramp);
 
             const lever = new Lever({
                 position: leverGroup.lever.position,
@@ -169,7 +177,7 @@ function startGame() {
                 ramp,
             });
             allLevers.push(lever);
-            blocksAssets.push(lever);
+            allAssets.push(lever);
         });
     }
 
@@ -179,11 +187,11 @@ function startGame() {
             const newCube = new Cube({
                 position: { ...cube.position },
                 collisionBlocks,
-                blocksAssets,
+                allAssets,
                 players: allPlayers,
             });
             allCubes.push(newCube);
-            blocksAssets.push(newCube);
+            allAssets.push(newCube);
         });
     }
 
@@ -204,7 +212,7 @@ function startGame() {
             new Player({
                 position: { ...currentPlayer[currentLevel].position },
                 collisionBlocks,
-                blocksAssets,
+                allAssets,
                 diamonds: allDiamonds,
                 doors: allDoors,
                 imgSrc: currentPlayer.constants.imgSrc,
@@ -285,6 +293,8 @@ function playGame() {
     let fixedFps = 60;
     let interval = 1000 / fixedFps;
     let then = Date.now();
+
+    let time;
 
     function animation() {
         now = Date.now();
@@ -374,13 +384,13 @@ function playGame() {
                 cube.draw();
                 cube.update();
                 if (cube.rampBlocked) {
-                    blocksAssets.forEach((blocksAsset) => {
+                    allAssets.forEach((asset) => {
                         if (
-                            blocksAsset.hitbox.position.y ==
+                            asset.hitbox.position.y ==
                             Math.round(cube.hitbox.position.y + cube.hitbox.height)
                         ) {
-                            blocksAsset.blocked = true;
-                            blocksAsset.blockedDirection = "up";
+                            asset.blocked = true;
+                            asset.blockedDirection = "up";
                         }
                     });
                 }
@@ -420,13 +430,13 @@ function playGame() {
                 player.update();
 
                 if (player.rampBlocked) {
-                    blocksAssets.forEach((blocksAsset) => {
+                    allAssets.forEach((asset) => {
                         if (
-                            blocksAsset.hitbox.position.y ==
+                            asset.hitbox.position.y ==
                             Math.round(player.hitbox.position.y + player.hitbox.height)
                         ) {
-                            blocksAsset.blocked = true;
-                            blocksAsset.blockedDirection = "up";
+                            asset.blocked = true;
+                            asset.blockedDirection = "up";
                         }
                     });
                 }
@@ -442,9 +452,16 @@ function playGame() {
                 pond.draw();
             });
 
+            //time calc
+            time = now - startedTime - pausedTime;
+            const formatedTime = formatTime(time);
+            drawTime(formatedTime.minutes, formatedTime.seconds);
+
             //both doors opened
             if (allDoors[0].opened == true && allDoors[1].opened == true) {
                 levelCompleted = true;
+                levelTime.minutes = formatedTime.minutes;
+                levelTime.seconds = formatedTime.seconds;
                 playersDissapearing();
                 return;
             }
@@ -497,6 +514,8 @@ function playGame() {
         ponds.forEach((pond) => {
             pond.draw();
         });
+        const formatedTime = formatTime(time);
+        drawTime(formatedTime.minutes, formatedTime.seconds);
         pauseButton.draw();
     }
 
@@ -515,7 +534,7 @@ function playGame() {
                         questCount++;
                     }
                 });
-                
+
                 endFunction("won");
             }
             allDoors.forEach((door) => {
@@ -585,6 +604,7 @@ function playGame() {
                         player.keys.pressed[key] = false;
                     }
                 });
+                pausedStartTime = Date.now();
             }
             return;
         }
@@ -605,6 +625,7 @@ function playGame() {
 
                     if (continueAnimation) {
                         drawMenuAnimation(menuActive, "down");
+                        pausedTime += Date.now() - pausedStartTime;
                     }
                     if (endGame) {
                         setEndGame(false);

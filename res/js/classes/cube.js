@@ -2,7 +2,7 @@ import { ctx } from "../helpers.js";
 import { Sprite } from "../sprite.js";
 
 export class Cube extends Sprite {
-    constructor({ position, collisionBlocks, blocksAssets, players }) {
+    constructor({ position, collisionBlocks, allAssets, players }) {
         const imgSrc = "./res/img/cube.png";
         super({ position, imgSrc });
 
@@ -26,7 +26,7 @@ export class Cube extends Sprite {
         this.isOnRamp = false;
 
         this.collisionBlocks = collisionBlocks;
-        this.blocksAssets = blocksAssets;
+        this.allAssets = allAssets;
         this.players = players;
 
         this.rampBlocked = false;
@@ -41,7 +41,7 @@ export class Cube extends Sprite {
         this.position.x += this.velocity.x;
 
         this.hitboxPositionCalc();
-        this.horizontalCollision(this.blocksAssets);
+        this.horizontalCollision(this.allAssets);
 
         this.hitboxPositionCalc();
         this.horizontalCollision(this.players);
@@ -59,7 +59,7 @@ export class Cube extends Sprite {
 
         this.isOnRamp = false;
         this.hitboxPositionCalc();
-        this.verticalCollision(this.blocksAssets);
+        this.verticalCollision(this.allAssets);
 
         this.hitboxPositionCalc();
         this.verticalCollision(this.players);

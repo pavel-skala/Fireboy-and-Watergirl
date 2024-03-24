@@ -28,7 +28,7 @@ function getMousePos(event) {
 let continueAnimation = false;
 let endGame = false;
 let currentLevel = 1;
-let menuActive = "mainMenu";
+let menuActive = null;
 
 function setContinueAnimation(setValue) {
     continueAnimation = setValue;
