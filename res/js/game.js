@@ -16,8 +16,9 @@ import {
     setEndGame,
     menuActive,
     setMenuActive,
+    setCurrentLevel,
 } from "./helpers.js";
-import { drawInGameMenu } from "./menus.js";
+import { drawInGameMenu, drawMenu, checkMenuDiamondsCollision, menuDiamonds } from "./menus.js";
 import { Lever } from "./classes/lever.js";
 import { Cube } from "./classes/cube.js";
 import { Door } from "./classes/door.js";
@@ -99,6 +100,7 @@ function startGame() {
 
     levelCompleted = false;
     startedTime = Date.now();
+    pausedTime = 0;
 
     const values = createObjectsFromArray(levels[currentLevel]);
     collisionBlocks = values.objects;
@@ -109,7 +111,7 @@ function startGame() {
             x: 0,
             y: 0,
         },
-        imgSrc: `./res/img/maps/blocks${currentLevel}.png`,
+        imgSrc: `./res/img/maps/level${currentLevel}.png`,
     });
 
     //diamonds
@@ -286,7 +288,8 @@ function startGame() {
 }
 
 function playGame() {
-    startGame();
+    drawMenu();
+    // startGame();
 
     let now;
     let delta;
@@ -376,9 +379,9 @@ function playGame() {
             }
 
             bgBlocks.draw();
-            collisionBlocks.forEach((collisionBlock) => {
-                collisionBlock.draw();
-            });
+            // collisionBlocks.forEach((collisionBlock) => {
+            //     collisionBlock.draw();
+            // });
 
             allCubes.forEach((cube) => {
                 cube.draw();
@@ -479,7 +482,6 @@ function playGame() {
         }
         requestAnimationFrame(animation);
     }
-    animation();
 
     function drawAll() {
         background.draw();
@@ -494,9 +496,9 @@ function playGame() {
             });
         });
         bgBlocks.draw();
-        collisionBlocks.forEach((collisionBlock) => {
-            collisionBlock.draw();
-        });
+        // collisionBlocks.forEach((collisionBlock) => {
+        //     collisionBlock.draw();
+        // });
         allCubes.forEach((cube) => {
             cube.draw();
         });
@@ -534,7 +536,13 @@ function playGame() {
                         questCount++;
                     }
                 });
+                if (questCount > menuDiamonds[currentLevel].questsStatus) {
+                    menuDiamonds[currentLevel].setQuestsStatus(questCount);
+                }
 
+                menuDiamonds[currentLevel].diamondsUnlocking.forEach((index) => {
+                    menuDiamonds[index].unlocked = true;
+                });
                 endFunction("won");
             }
             allDoors.forEach((door) => {
@@ -607,6 +615,17 @@ function playGame() {
                 pausedStartTime = Date.now();
             }
             return;
+        }
+
+        if (menuActive == "mainMenu") {
+            for (const index in menuDiamonds) {
+                if (checkMenuDiamondsCollision(mousePos, menuDiamonds[index])) {
+                    setCurrentLevel(index);
+                    setMenuActive(null);
+                    startGame();
+                    animation();
+                }
+            }
         }
 
         for (const menuButton in menuButtons[menuActive]) {

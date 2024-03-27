@@ -230,7 +230,6 @@ export class Cube extends Sprite {
                         this.hitbox.position.y >=
                         block.hitbox.position.y + block.hitbox.height - block.hitbox.legs.height
                     ) {
-                        console.log("pepa");
                         //player going left
                         if (this.hitbox.position.x >= block.hitbox.position.x) {
                             block.sliding.left = true;

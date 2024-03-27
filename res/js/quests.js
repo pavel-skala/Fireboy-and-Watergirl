@@ -27,18 +27,17 @@ export class Quest {
             currentRow: 1,
         });
 
-        this.completed = false
+        this.completed = false;
     }
     setVariable() {
         this.requirement.variable = this.requirement.getVariable();
     }
     check() {
         if (
-            JSON.stringify(this.requirement.variable) ==
-            JSON.stringify(this.requirement.required)
+            JSON.stringify(this.requirement.variable) == JSON.stringify(this.requirement.required)
         ) {
             this.status.currentRow = 2;
-            this.completed = true
+            this.completed = true;
         }
     }
     updatePositionY(menuPos) {
@@ -49,4 +48,24 @@ export class Quest {
         this.quest.draw();
         this.status.draw();
     }
+}
+
+export function drawArrow(menuPos) {
+    let startX = 700;
+    let startY = menuPos + 310;
+    let size = 100;
+    let arrowX = startX + 0.75 * size;
+    let arrowTopY = startY - 0.707 * (0.25 * size);
+    let arrowBottomY = startY + 0.707 * (0.25 * size);
+
+    ctx.strokeStyle = "#fac702";
+    ctx.lineWidth = 10;
+    ctx.beginPath();
+    ctx.moveTo(startX, startY);
+    ctx.lineTo(startX + size, startY);
+    ctx.moveTo(startX + size + 1, startY + 3);
+    ctx.lineTo(arrowX, arrowTopY);
+    ctx.moveTo(startX + size + 1, startY - 3);
+    ctx.lineTo(arrowX, arrowBottomY);
+    ctx.stroke();
 }

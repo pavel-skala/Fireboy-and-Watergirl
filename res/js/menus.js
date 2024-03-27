@@ -1,8 +1,10 @@
 import { Sprite } from "./sprite.js";
 import { menuButtons } from "./buttons.js";
-import { canvas, ctx } from "./helpers.js";
+import { canvas, ctx, currentLevel } from "./helpers.js";
 import { quests } from "./game.js";
 import { levelTime } from "./time.js";
+import { drawArrow } from "./quests.js";
+import { MenuDiamond } from "./menuDiamond.js";
 
 const menuBg = new Sprite({
     position: {
@@ -11,6 +13,11 @@ const menuBg = new Sprite({
     },
     imgSrc: "./res/img/menu_bg.png",
 });
+
+const menuDiamondsBorderColor = {
+    true: "#fac702",
+    false: "#4d3b0e",
+};
 
 const menusTexts = {
     lost: () => {
@@ -42,18 +49,31 @@ const menusTexts = {
         ctx.fillStyle = "yellow";
         ctx.fillText(fullText, 600, menuBg.position.y + 160);
 
-
         quests.forEach((quest) => {
             quest.updatePositionY(menuBg.position.y);
             quest.draw();
         });
+
+        drawArrow(menuBg.position.y);
+
+        menuWonDiamond.position.y = menuBg.position.y + 280;
+        menuWonDiamond.setQuestsStatus(menuDiamonds[currentLevel].questsStatus);
+        menuWonDiamond.drawFullDiamond();
     },
 };
+
+let menuWonDiamond = new MenuDiamond({
+    position: {
+        x: 900,
+        y: 270,
+    },
+    unlocked: true,
+});
 
 function drawInGameMenu(name, transform) {
     menuBg.position.y += transform;
     menuBg.draw();
-    
+
     menusTexts[name]();
 
     for (const btnName in menuButtons[name]) {
@@ -65,12 +85,43 @@ function drawInGameMenu(name, transform) {
 }
 
 function drawMenu() {
-    ctx.fillStyle = "black";
+    ctx.fillStyle = "#5c4614";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    ctx.font = "150px Cinzel";
-    ctx.fillStyle = "yellow";
-    ctx.fillText("Menu soon", canvas.width * 0.2, 200);
+    for (const key in menuDiamonds) {
+        const diamond = menuDiamonds[key];
+
+        diamond.drawFullDiamond();
+    }
 }
 
-export { drawMenu, drawInGameMenu };
+function checkMenuDiamondsCollision(pos, diamond) {
+    return (
+        diamond.unlocked &&
+        pos.x > diamond.position.x &&
+        pos.x < diamond.position.x + diamond.height * 0.9 &&
+        pos.y < diamond.position.y + diamond.height &&
+        pos.y > diamond.position.y
+    );
+}
+
+let menuDiamonds = {
+    1: new MenuDiamond({
+        position: {
+            x: canvas.width * 0.48,
+            y: canvas.height * 0.9,
+        },
+        questsStatus: 0,
+        unlocked: true,
+        pathUnlocking: [],
+        diamondsUnlocking: [],
+    }),
+};
+
+export {
+    drawMenu,
+    drawInGameMenu,
+    checkMenuDiamondsCollision,
+    menuDiamonds,
+    menuDiamondsBorderColor,
+};

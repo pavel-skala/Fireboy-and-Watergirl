@@ -19,7 +19,7 @@ function formatTime(miliseconds) {
     if (minutes < 10) {
         minutes = "0" + minutes;
     }
-
+    console.log(miliseconds);
     return { minutes, seconds };
 }
 
