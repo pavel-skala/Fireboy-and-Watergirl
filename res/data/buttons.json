@@ -26,7 +26,70 @@
                     "x": 1224,
                     "y": 540
                 },
-                "finalColor": "#b300b3"
+                "finalColor": "#b300b3",
+                "rotated": false
+            }
+        }
+    ],
+    "2": [
+        {
+            "buttons": [
+                {
+                    "position": {
+                        "x": 252,
+                        "y": 738
+                    }
+                },
+                {
+                    "position": {
+                        "x": 1080,
+                        "y": 738
+                    }
+                }
+            ],
+            "ramp": {
+                "position": {
+                    "x": 684,
+                    "y": 612
+                },
+                "boxCount": 4,
+                "color": "#b2b2b2",
+                "finalPosition": {
+                    "x": 684,
+                    "y": 468
+                },
+                "finalColor": "white",
+                "rotated": true
+            }
+        },
+        {
+            "buttons": [
+                {
+                    "position": {
+                        "x": 324,
+                        "y": 162
+                    }
+                },
+                {
+                    "position": {
+                        "x": 1008,
+                        "y": 162
+                    }
+                }
+            ],
+            "ramp": {
+                "position": {
+                    "x": 782,
+                    "y": 175
+                },
+                "boxCount": 5,
+                "color": "#009300",
+                "finalPosition": {
+                    "x": 612,
+                    "y": 175
+                },
+                "finalColor": "#00CB00",
+                "rotated": false
             }
         }
     ]

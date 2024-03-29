@@ -88,11 +88,41 @@ function drawMenu() {
     ctx.fillStyle = "#5c4614";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+    //buttons
+    for (const btnName in menuButtons.mainMenu) {
+        menuButtons.mainMenu[btnName].draw();
+    }
+
+    //paths
+    for (const key in menuDiamondsPath) {
+        const path = menuDiamondsPath[key];
+        drawFullPath(path);
+    }
+
+    //diamonds
     for (const key in menuDiamonds) {
         const diamond = menuDiamonds[key];
 
         diamond.drawFullDiamond();
     }
+}
+
+function drawFullPath(path) {
+    const mainColor = menuDiamondsBorderColor[path.unlocked];
+    drawPathPart(path, 0, 3, "black");
+    drawPathPart(path, 3, 9, mainColor);
+    drawPathPart(path, 12, 3, "black");
+}
+
+function drawPathPart(path, offset, width, color) {
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(path.position.x + offset, path.position.y);
+    ctx.lineTo(path.finalPosition.x + offset, path.finalPosition.y);
+    ctx.lineTo(path.finalPosition.x + width + offset, path.finalPosition.y);
+    ctx.lineTo(path.position.x + width + offset, path.position.y);
+    ctx.lineTo(path.position.x + offset, path.position.y);
+    ctx.fill();
 }
 
 function checkMenuDiamondsCollision(pos, diamond) {
@@ -105,6 +135,16 @@ function checkMenuDiamondsCollision(pos, diamond) {
     );
 }
 
+function unlockAllDiamonds() {
+    for (const index in menuDiamonds) {
+        menuDiamonds[index].unlocked = true;
+    }
+    for (const index in menuDiamondsPath) {
+        menuDiamondsPath[index].unlocked = true;
+    }
+    drawMenu();
+}
+
 let menuDiamonds = {
     1: new MenuDiamond({
         position: {
@@ -113,9 +153,33 @@ let menuDiamonds = {
         },
         questsStatus: 0,
         unlocked: true,
+        pathUnlocking: [1],
+        diamondsUnlocking: [2],
+    }),
+    2: new MenuDiamond({
+        position: {
+            x: canvas.width * 0.48,
+            y: canvas.height * 0.75,
+        },
+        questsStatus: 0,
+        unlocked: false,
         pathUnlocking: [],
         diamondsUnlocking: [],
     }),
+};
+
+let menuDiamondsPath = {
+    1: {
+        position: {
+            x: 691,
+            y: canvas.height * 0.9,
+        },
+        finalPosition: {
+            x: 691,
+            y: canvas.height * 0.81,
+        },
+        unlocked: false,
+    },
 };
 
 export {
@@ -124,4 +188,6 @@ export {
     checkMenuDiamondsCollision,
     menuDiamonds,
     menuDiamondsBorderColor,
+    unlockAllDiamonds,
+    menuDiamondsPath,
 };

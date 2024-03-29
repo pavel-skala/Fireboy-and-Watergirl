@@ -59,7 +59,8 @@ export class Sprite {
             if (
                 this.currentAnimation == "left" ||
                 this.currentAnimation == "right" ||
-                this.shape == "lever"
+                this.shape == "lever" ||
+                (this.shape == "ramp" && this.angle)
             ) {
                 ctx.save();
                 if (this.shape == "lever") {
@@ -123,7 +124,6 @@ export class Sprite {
                 }
                 ctx.restore();
             }
-
             //flipped images
             else if (this.flipImage) {
                 ctx.save();

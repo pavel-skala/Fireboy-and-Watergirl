@@ -1,6 +1,6 @@
 import { Sprite } from "./sprite.js";
 import { canvas, ctx, setContinueAnimation, setEndGame, setMenuActive } from "./helpers.js";
-import { drawMenu } from "./menus.js";
+import { drawMenu, unlockAllDiamonds } from "./menus.js";
 
 //check collision for button in menu
 function checkButtonCollision(pos, button) {
@@ -194,6 +194,23 @@ const menuButtons = {
             runCode: () => {
                 setMenuActive("mainMenu");
                 drawMenu();
+            },
+        }),
+    },
+    mainMenu: {
+        unlock: new MenuButton({
+            position: {
+                x: canvas.width - 520,
+                y: canvas.height * 0.88,
+            },
+            width: 500,
+            height: canvas.height * 0.1,
+            yOffset: canvas.height * 0.43,
+            text: "Unlock all",
+            runCode: () => {
+                unlockAllDiamonds();
+                delete menuButtons.mainMenu.unlock
+                drawMenu()
             },
         }),
     },

@@ -1,4 +1,3 @@
-import { ctx } from "../helpers.js";
 import { Sprite } from "../sprite.js";
 
 export class Cube extends Sprite {

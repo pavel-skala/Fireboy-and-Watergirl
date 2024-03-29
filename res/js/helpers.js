@@ -47,7 +47,7 @@ function setMenuActive(setValue) {
 }
 
 let gameData = {};
-const jsonsFiles = ["players", "diamonds", "buttons", "levers", "cubes", "doors"];
+const jsonsFiles = ["players", "diamonds", "buttons", "levers", "cubes", "doors", "bridges"];
 
 async function loadData() {
     try {

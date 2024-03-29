@@ -30,7 +30,7 @@ export class Player extends Sprite {
         this.collisionBlocks = collisionBlocks;
         this.allAssets = allAssets;
         this.diamonds = diamonds;
-        this.doors = doors
+        this.doors = doors;
 
         this.isOnBlock = false;
 
@@ -183,6 +183,9 @@ export class Player extends Sprite {
         if (this.angle > 0) {
             this.angle /= 1.5;
         }
+        if (this.velocity.y == 0) {
+            this.angle = 0;
+        }
     }
     hitboxPositionCalc() {
         this.hitbox.position = {
@@ -234,8 +237,21 @@ export class Player extends Sprite {
                     block.shape == "square" ||
                     block.shape == "ramp" ||
                     block.shape == "lever" ||
-                    block.shape == "cube"
+                    block.shape == "cube" ||
+                    block.shape == "pondTriangle"
                 ) {
+                    //collision not from side
+                    if (
+                        block.shape == "pondTriangle" &&
+                        ((block.direction.x == "left" &&
+                            this.hitbox.legs.position.x + this.hitbox.legs.width <=
+                                block.hitbox.position.x + block.hitbox.width &&
+                            block.hitbox.width) ||
+                            (block.direction.x == "right" && this.velocity.x < 0))
+                    ) {
+                        break;
+                    }
+
                     //head collision
                     if (
                         this.hitbox.position.y + this.hitbox.height - this.hitbox.legs.height >=
@@ -343,66 +359,103 @@ export class Player extends Sprite {
                     }
                 }
                 //triangle collision
-                else if (
-                    block.shape == "triangle" &&
-                    block.direction.y == "up" &&
-                    this.isOnBlock == false
-                ) {
-                    //head collision
-                    if (
-                        this.hitbox.position.y + this.hitbox.height - this.hitbox.legs.height >=
-                            block.hitbox.position.y + block.hitbox.height &&
-                        this.hitbox.position.y <= block.hitbox.position.y + block.hitbox.height &&
-                        !this.sliding.left &&
-                        !this.sliding.right
-                    ) {
-                        //player going to left
-                        if (this.velocity.x < 0) {
+                else if (block.shape == "triangle") {
+                    if (block.direction.y == "down" && this.isOnBlock) {
+                        if (
+                            block.direction.x == "left" &&
+                            this.hitbox.position.x + this.hitbox.width >
+                                block.hitbox.position.x + 10 &&
+                            this.hitbox.position.x + this.hitbox.width <
+                                block.hitbox.position.x + block.hitbox.width &&
+                            this.hitbox.position.y > block.hitbox.position.y &&
+                            this.hitbox.position.y < block.hitbox.position.y + 18
+                        ) {
+                            const offset =
+                                this.hitbox.position.x - this.position.x + this.hitbox.width - 10;
+                            this.position.x = block.hitbox.position.x - offset - 0.01;
+                            break;
+                        } else if (
+                            block.direction.x == "right" &&
+                            this.hitbox.position.x <
+                                block.hitbox.position.x + block.hitbox.width - 10 &&
+                            this.hitbox.position.x > block.hitbox.position.x &&
+                            this.hitbox.position.y > block.hitbox.position.y &&
+                            this.hitbox.position.y < block.hitbox.position.y + 18
+                        ) {
                             const offset = this.hitbox.position.x - this.position.x;
                             this.position.x =
                                 block.hitbox.position.x + block.hitbox.width - offset + 0.01;
                             break;
                         }
-                        //player going to right
-                        else if (this.velocity.x > 0) {
-                            const offset =
-                                this.hitbox.position.x - this.position.x + this.hitbox.width;
-                            this.position.x = block.hitbox.position.x - offset - 0.01;
+                    }
+                    if (
+                        block.direction.x == "left" &&
+                        this.hitbox.position.x <= block.hitbox.position.x + block.hitbox.width &&
+                        this.hitbox.position.x >= block.hitbox.position.x &&
+                        this.velocity.x < 0
+                    ) {
+                        //head collision
+                        if (
+                            this.hitbox.position.y + this.hitbox.height - this.hitbox.legs.height >=
+                                block.hitbox.position.y &&
+                            Math.round(this.hitbox.position.y) <
+                                block.hitbox.position.y + block.hitbox.height &&
+                            !this.sliding.right &&
+                            !this.sliding.left
+                        ) {
+                            const offset = this.hitbox.position.x - this.position.x;
+                            this.position.x =
+                                block.hitbox.position.x + block.hitbox.width - offset + 0.01;
                             break;
                         }
-                    }
-                    //player sliding
-                    else if (this.sliding.left) this.position.x--;
-                    else if (this.sliding.right) this.position.x++;
-                    //legs collision
-                    else if (
-                        this.hitbox.legs.position.y + this.hitbox.legs.height >=
-                            block.hitbox.position.y + block.hitbox.height &&
-                        this.hitbox.legs.position.y <= block.hitbox.position.y + block.hitbox.height
-                    ) {
-                        //triangle left
-                        if (
-                            block.direction.x == "right" &&
+                        //legs collision
+                        else if (
+                            this.hitbox.legs.position.y + this.hitbox.legs.height >
+                                block.hitbox.position.y &&
+                            this.hitbox.legs.position.y + this.hitbox.legs.height <=
+                                block.hitbox.position.y + block.hitbox.height &&
                             this.hitbox.legs.position.x <=
                                 block.hitbox.position.x + block.hitbox.width &&
-                            this.lastPosition.x +
-                                (this.hitbox.width - this.hitbox.legs.width) / 2 >=
-                                block.hitbox.position.x + block.hitbox.width
+                            this.hitbox.legs.position.x + this.hitbox.legs.width >=
+                                block.hitbox.position.x + block.hitbox.width &&
+                            this.velocity.y != 0
                         ) {
                             const offset = this.hitbox.legs.position.x - this.position.x;
                             this.position.x =
                                 block.hitbox.position.x + block.hitbox.width - offset + 0.01;
                             break;
                         }
-                        //triangle right
+                    } else if (
+                        block.direction.x == "right" &&
+                        this.hitbox.position.x + this.hitbox.width >= block.hitbox.position.x &&
+                        this.hitbox.position.x + this.hitbox.width <=
+                            block.hitbox.position.x + block.hitbox.width &&
+                        this.velocity.x > 0
+                    ) {
+                        //head collision
+                        if (
+                            this.hitbox.position.y + this.hitbox.height - this.hitbox.legs.height >=
+                                block.hitbox.position.y &&
+                            Math.round(this.hitbox.position.y) <
+                                block.hitbox.position.y + block.hitbox.height &&
+                            !this.sliding.right &&
+                            !this.sliding.left
+                        ) {
+                            const offset =
+                                this.hitbox.position.x - this.position.x + this.hitbox.width;
+                            this.position.x = block.hitbox.position.x - offset - 0.01;
+                            break;
+                        }
+                        //legs collision
                         else if (
-                            block.direction.x == "left" &&
+                            this.hitbox.legs.position.y + this.hitbox.legs.height >
+                                block.hitbox.position.y &&
+                            this.hitbox.legs.position.y + this.hitbox.legs.height <=
+                                block.hitbox.position.y + block.hitbox.height &&
                             this.hitbox.legs.position.x + this.hitbox.legs.width >=
                                 block.hitbox.position.x &&
-                            this.lastPosition.x +
-                                (this.hitbox.width - this.hitbox.legs.width) / 2 +
-                                this.hitbox.legs.width <=
-                                block.hitbox.position.x
+                            this.hitbox.legs.position.x <= block.hitbox.position.x &&
+                            this.velocity.y != 0
                         ) {
                             const offset =
                                 this.hitbox.legs.position.x -
@@ -412,11 +465,146 @@ export class Player extends Sprite {
                             break;
                         }
                     }
+                    //triangle up collision
+                    if (block.direction.y == "up" && this.isOnBlock == false) {
+                        //head collision
+                        if (
+                            this.hitbox.position.y + this.hitbox.height - this.hitbox.legs.height >=
+                                block.hitbox.position.y + block.hitbox.height &&
+                            this.hitbox.position.y <=
+                                block.hitbox.position.y + block.hitbox.height &&
+                            !this.sliding.left &&
+                            !this.sliding.right
+                        ) {
+                            //player going to left
+                            if (this.velocity.x < 0) {
+                                const offset = this.hitbox.position.x - this.position.x;
+                                this.position.x =
+                                    block.hitbox.position.x + block.hitbox.width - offset + 0.01;
+                                break;
+                            }
+                            //player going to right
+                            else if (this.velocity.x > 0) {
+                                const offset =
+                                    this.hitbox.position.x - this.position.x + this.hitbox.width;
+                                this.position.x = block.hitbox.position.x - offset - 0.01;
+                                break;
+                            }
+                        }
+                        //player sliding
+                        else if (this.sliding.left) this.position.x--;
+                        else if (this.sliding.right) this.position.x++;
+                        //legs collision
+                        else if (
+                            this.hitbox.legs.position.y + this.hitbox.legs.height >=
+                                block.hitbox.position.y + block.hitbox.height &&
+                            this.hitbox.legs.position.y <=
+                                block.hitbox.position.y + block.hitbox.height
+                        ) {
+                            //triangle left
+                            if (
+                                block.direction.x == "right" &&
+                                this.hitbox.legs.position.x <=
+                                    block.hitbox.position.x + block.hitbox.width &&
+                                this.lastPosition.x +
+                                    (this.hitbox.width - this.hitbox.legs.width) / 2 >=
+                                    block.hitbox.position.x + block.hitbox.width
+                            ) {
+                                const offset = this.hitbox.legs.position.x - this.position.x;
+                                this.position.x =
+                                    block.hitbox.position.x + block.hitbox.width - offset + 0.01;
+                                break;
+                            }
+                            //triangle right
+                            else if (
+                                block.direction.x == "left" &&
+                                this.hitbox.legs.position.x + this.hitbox.legs.width >=
+                                    block.hitbox.position.x &&
+                                this.lastPosition.x +
+                                    (this.hitbox.width - this.hitbox.legs.width) / 2 +
+                                    this.hitbox.legs.width <=
+                                    block.hitbox.position.x
+                            ) {
+                                const offset =
+                                    this.hitbox.legs.position.x -
+                                    this.position.x +
+                                    this.hitbox.legs.width;
+                                this.position.x = block.hitbox.position.x - offset - 0.01;
+                                break;
+                            }
+                        }
+                    }
+                    //triangle down collision
+                    else if (block.direction.y == "down" && this.isOnBlock == false) {
+                        //head collision
+                        if (
+                            this.hitbox.position.y + this.hitbox.height - this.hitbox.legs.height >=
+                                block.hitbox.position.y &&
+                            this.hitbox.position.y <= block.hitbox.position.y &&
+                            !this.sliding.left &&
+                            !this.sliding.right
+                        ) {
+                            //player going to left
+                            if (this.velocity.x < 0) {
+                                const offset = this.hitbox.position.x - this.position.x;
+                                this.position.x =
+                                    block.hitbox.position.x + block.hitbox.width - offset + 0.01;
+                                break;
+                            }
+                            //player going to right
+                            else if (this.velocity.x > 0) {
+                                const offset =
+                                    this.hitbox.position.x - this.position.x + this.hitbox.width;
+                                this.position.x = block.hitbox.position.x - offset - 0.01;
+                                break;
+                            }
+                        }
+                        //player sliding
+                        else if (this.sliding.left) this.position.x--;
+                        else if (this.sliding.right) this.position.x++;
+                        //legs collision
+                        else if (
+                            this.hitbox.legs.position.y + this.hitbox.legs.height >=
+                                block.hitbox.position.y &&
+                            this.hitbox.legs.position.y <= block.hitbox.position.y
+                        ) {
+                            //triangle left
+                            if (
+                                block.direction.x == "right" &&
+                                this.hitbox.legs.position.x <=
+                                    block.hitbox.position.x + block.hitbox.width &&
+                                this.lastPosition.x +
+                                    (this.hitbox.width - this.hitbox.legs.width) / 2 >=
+                                    block.hitbox.position.x + block.hitbox.width
+                            ) {
+                                const offset = this.hitbox.legs.position.x - this.position.x;
+                                this.position.x =
+                                    block.hitbox.position.x + block.hitbox.width - offset + 0.01;
+                                break;
+                            }
+                            //triangle right
+                            else if (
+                                block.direction.x == "left" &&
+                                this.hitbox.legs.position.x + this.hitbox.legs.width >=
+                                    block.hitbox.position.x &&
+                                this.lastPosition.x +
+                                    (this.hitbox.width - this.hitbox.legs.width) / 2 +
+                                    this.hitbox.legs.width <=
+                                    block.hitbox.position.x
+                            ) {
+                                const offset =
+                                    this.hitbox.legs.position.x -
+                                    this.position.x +
+                                    this.hitbox.legs.width;
+                                this.position.x = block.hitbox.position.x - offset - 0.01;
+                                break;
+                            }
+                        }
+                    }
                 }
             }
         }
     }
-    //calculate XPosition in square 36*36
     calculateXPos(block) {
         let xPos;
         //triangle up
@@ -457,6 +645,10 @@ export class Player extends Sprite {
             this.velocity.y = 0;
             const offset = this.hitbox.position.y + this.hitbox.height - this.position.y;
             this.position.y = block.hitbox.position.y + xPos - offset - 0.01;
+            if (block.shape == "triangle") {
+                if (block.direction.x == "left") this.position.x -= 0.5;
+                else this.position.x += 0.5;
+            }
         }
         //for triangle down
         else if (
@@ -489,18 +681,23 @@ export class Player extends Sprite {
                     if (
                         this.isOnRamp &&
                         Math.round(this.hitbox.position.y) <=
-                            block.hitbox.position.y + block.hitbox.height
+                            block.hitbox.position.y + block.hitbox.height &&
+                        Math.round(this.hitbox.position.y) >= block.hitbox.position.y
                     ) {
                         this.rampBlocked = true;
                         break;
                     }
+
                     //player going down legs collision
                     if (
-                        this.velocity.y > 0 &&
+                        this.velocity.y >= 0 &&
                         this.hitbox.legs.position.x <
                             block.hitbox.position.x + block.hitbox.width &&
                         this.hitbox.legs.position.x + this.hitbox.legs.width >
-                            block.hitbox.position.x
+                            block.hitbox.position.x &&
+                        this.hitbox.position.y + this.hitbox.height >= block.hitbox.position.y &&
+                        this.hitbox.position.y + this.hitbox.height <=
+                            block.hitbox.position.y + block.hitbox.height
                     ) {
                         if (block.shape == "button") {
                             block.pressed = true;
@@ -578,8 +775,21 @@ export class Player extends Sprite {
                 }
                 //collision for triangle left
                 else if (block.direction.x == "left") {
-                    //player going from down to triangle
+                    //player going down head collision
                     if (
+                        block.shape == "pondTriangle" &&
+                        this.velocity.y > 0 &&
+                        this.hitbox.position.y + this.hitbox.height - this.hitbox.legs.height >=
+                            block.hitbox.position.y &&
+                        this.hitbox.legs.position.x >= block.hitbox.position.x + block.hitbox.width
+                    ) {
+                        this.position.x += 3;
+                        this.sliding.right = true;
+                        break;
+                    }
+
+                    //player going from down to triangle
+                    else if (
                         block.direction.y == "up" &&
                         this.lastPosition.y >= block.hitbox.position.y + block.hitbox.height
                     ) {
@@ -589,13 +799,28 @@ export class Player extends Sprite {
                             block.hitbox.position.y + block.hitbox.height - offset + 0.01;
                         break;
                     }
+                    // player standing on triangle
+                    else if (
+                        block.direction.y == "up" &&
+                        this.hitbox.legs.position.x + this.hitbox.legs.width >
+                            block.hitbox.position.x + block.hitbox.width &&
+                        this.hitbox.legs.position.x <= block.hitbox.position.x + block.hitbox.width
+                    ) {
+                        this.isOnBlock = true;
+                        const offset =
+                            this.hitbox.position.y + this.hitbox.height - this.position.y;
+
+                        this.velocity.y = 0;
+                        this.position.y = block.hitbox.position.y - offset - 0.01;
+                        break;
+                    }
                     //check collision for triangle up left
                     else if (
+                        block.direction.y == "up" &&
                         this.hitbox.legs.position.x + this.hitbox.legs.width >
                             block.hitbox.position.x &&
-                        this.hitbox.legs.position.x + this.hitbox.legs.width <=
-                            block.hitbox.position.x + block.hitbox.width &&
-                        block.direction.y == "up"
+                        this.hitbox.legs.position.x + this.hitbox.legs.width <
+                            block.hitbox.position.x + block.hitbox.width
                     ) {
                         let xPos = this.calculateXPos(block);
 
@@ -604,14 +829,62 @@ export class Player extends Sprite {
                     }
                     // check collision for triangle down left
                     else if (
+                        block.direction.y == "down" &&
+                        this.velocity.y < 0 &&
+                        this.hitbox.position.x + this.hitbox.width >
+                            block.hitbox.position.x + block.hitbox.width &&
+                        this.hitbox.position.x <= block.hitbox.position.x + block.hitbox.width &&
+                        this.hitbox.position.y < block.hitbox.position.y + block.hitbox.height &&
+                        this.hitbox.position.y > block.hitbox.position.y
+                    ) {
+                        this.velocity.y = 0;
+                        const offset = this.hitbox.position.y - this.position.y;
+                        this.position.y =
+                            block.hitbox.position.y + block.hitbox.height - offset + 0.01;
+                        break;
+                    }
+                    // check collision for triangle down left
+                    else if (
+                        block.direction.y == "down" &&
+                        this.velocity.y < 0 &&
                         this.hitbox.position.x + this.hitbox.width >= block.hitbox.position.x &&
                         this.hitbox.position.x + this.hitbox.width <=
                             block.hitbox.position.x + block.hitbox.width &&
-                        block.direction.y == "down" &&
-                        this.velocity.y < 0
+                        this.hitbox.position.y > block.hitbox.position.y
                     ) {
                         let xPos = this.calculateXPos(block);
                         this.triangleChangePosition(block, xPos);
+                        break;
+                    }
+                    //player going down to triangle down
+                    else if (
+                        block.direction.y == "down" &&
+                        this.velocity.y >= 0 &&
+                        this.hitbox.legs.position.x <
+                            block.hitbox.position.x + block.hitbox.width &&
+                        this.hitbox.legs.position.x + this.hitbox.legs.width >
+                            block.hitbox.position.x &&
+                        this.hitbox.position.y + this.hitbox.height >= block.hitbox.position.y &&
+                        this.hitbox.position.y + this.hitbox.height <=
+                            block.hitbox.position.y + block.hitbox.height
+                    ) {
+                        this.isOnBlock = true;
+                        const offset =
+                            this.hitbox.position.y + this.hitbox.height - this.position.y;
+
+                        this.velocity.y = 0;
+                        this.position.y = block.hitbox.position.y - offset - 0.01;
+                        break;
+                    }
+                    //player going down head collision
+                    else if (
+                        this.velocity.y > 0 &&
+                        this.hitbox.position.y + this.hitbox.height - this.hitbox.legs.height >=
+                            block.hitbox.position.y &&
+                        this.hitbox.legs.position.x > block.hitbox.position.x + block.hitbox.width
+                    ) {
+                        this.position.x += 3;
+                        this.sliding.right = true;
                         break;
                     }
                     //player going down head collision
@@ -635,14 +908,29 @@ export class Player extends Sprite {
                 }
                 //collision for triangle right
                 else if (block.direction.x == "right") {
+                    //player going down head collision
+                    if (
+                        block.shape == "pondTriangle" &&
+                        this.velocity.y > 0 &&
+                        this.hitbox.position.y + this.hitbox.height - this.hitbox.legs.height >=
+                            block.hitbox.position.y
+                    ) {
+                        this.position.x -= 3;
+                        this.sliding.left = true;
+                        break;
+                    }
                     //check pond
                     if (
                         block.shape == "pondTriangle" &&
                         this.element != block.element &&
-                        this.hitbox.position.y + this.hitbox.height >= block.hitbox.position.y + 10
+                        this.hitbox.position.y + this.hitbox.height >=
+                            block.hitbox.position.y + 10 &&
+                        this.hitbox.position.y <= block.hitbox.position.y &&
+                        this.hitbox.legs.position.x > block.hitbox.position.x
                     ) {
                         //end
                         this.died = true;
+                        break;
                     }
 
                     //player going from down to triangle
@@ -654,6 +942,21 @@ export class Player extends Sprite {
                         this.velocity.y = 0;
                         this.position.y =
                             block.hitbox.position.y + block.hitbox.height - offset + 0.01;
+                        break;
+                    }
+                    // player standing on triangle
+                    else if (
+                        block.direction.y == "up" &&
+                        this.hitbox.legs.position.x < block.hitbox.position.x &&
+                        this.hitbox.legs.position.x + this.hitbox.legs.width >=
+                            block.hitbox.position.x
+                    ) {
+                        this.isOnBlock = true;
+                        const offset =
+                            this.hitbox.position.y + this.hitbox.height - this.position.y;
+
+                        this.velocity.y = 0;
+                        this.position.y = block.hitbox.position.y - offset - 0.01;
                         break;
                     }
                     // check collision for triangle up right
@@ -669,10 +972,63 @@ export class Player extends Sprite {
                     }
 
                     //check collision for triangle down right
-                    else if (block.direction.y == "down" && this.velocity.y < 0) {
+                    else if (
+                        block.direction.y == "down" &&
+                        this.velocity.y < 0 &&
+                        this.hitbox.position.x < block.hitbox.position.x &&
+                        this.hitbox.position.x + this.hitbox.width >= block.hitbox.position.x &&
+                        this.hitbox.position.y < block.hitbox.position.y + block.hitbox.height &&
+                        this.hitbox.position.y > block.hitbox.position.y
+                    ) {
+                        this.velocity.y = 0;
+                        const offset = this.hitbox.position.y - this.position.y;
+                        this.position.y =
+                            block.hitbox.position.y + block.hitbox.height - offset + 0.01;
+                        break;
+                    }
+
+                    //check collision for triangle down right
+                    else if (
+                        block.direction.y == "down" &&
+                        this.velocity.y < 0 &&
+                        this.hitbox.position.x < block.hitbox.position.x + block.hitbox.width &&
+                        this.hitbox.position.y > block.hitbox.position.y
+                    ) {
                         let xPos = this.calculateXPos(block);
 
                         this.triangleChangePosition(block, xPos);
+                        break;
+                    }
+                    //player going down to triangle down
+                    else if (
+                        block.direction.y == "down" &&
+                        this.velocity.y >= 0 &&
+                        this.hitbox.legs.position.x <
+                            block.hitbox.position.x + block.hitbox.width &&
+                        this.hitbox.legs.position.x + this.hitbox.legs.width >
+                            block.hitbox.position.x &&
+                        this.hitbox.position.y + this.hitbox.height >= block.hitbox.position.y &&
+                        this.hitbox.position.y + this.hitbox.height <=
+                            block.hitbox.position.y + block.hitbox.height
+                    ) {
+                        this.isOnBlock = true;
+                        const offset =
+                            this.hitbox.position.y + this.hitbox.height - this.position.y;
+
+                        this.velocity.y = 0;
+                        this.position.y = block.hitbox.position.y - offset - 0.01;
+                        break;
+                    }
+                    //player going down head collision
+                    else if (
+                        this.velocity.y > 0 &&
+                        this.hitbox.position.y + this.hitbox.height - this.hitbox.legs.height >=
+                            block.hitbox.position.y &&
+                        this.hitbox.legs.position.x + this.hitbox.legs.width <
+                            block.hitbox.position.x
+                    ) {
+                        this.position.x -= 3;
+                        this.sliding.left = true;
                         break;
                     }
                     //player going down head collision
@@ -693,6 +1049,22 @@ export class Player extends Sprite {
                             break;
                         }
                     }
+                    if (
+                        block.shape == "pondTriangle" &&
+                        this.velocity.y > 0 &&
+                        this.hitbox.legs.position.x + this.hitbox.legs.width >=
+                            block.hitbox.position.x &&
+                        this.hitbox.legs.position.x + this.hitbox.legs.width <=
+                            block.hitbox.position.x + block.hitbox.width
+                    ) {
+                        this.isOnBlock = true;
+                        const offset =
+                            this.hitbox.position.y + this.hitbox.height - this.position.y;
+
+                        this.velocity.y = 0;
+                        this.position.y = block.hitbox.position.y - offset - 0.01;
+                        break;
+                    }
                 }
                 //collision for pond
                 else if (block.shape == "pond") {
@@ -706,7 +1078,9 @@ export class Player extends Sprite {
                     ) {
                         //end
                         this.died = true;
+                        break;
                     }
+
                     //player going down
                     if (
                         this.hitbox.legs.position.x <=
@@ -719,7 +1093,7 @@ export class Player extends Sprite {
                         !(
                             blocks[i + 1].shape == "pondTriangle" &&
                             this.hitbox.legs.position.x + this.hitbox.legs.width >
-                                blocks[i + 1].position.x
+                                blocks[i + 1].hitbox.position.x
                         )
                     ) {
                         this.isOnBlock = true;

@@ -18,7 +18,8 @@
                     "x": 36,
                     "y": 648
                 },
-                "finalColor": "yellow"
+                "finalColor": "yellow",
+                "rotated": false
             }
         }
     ]

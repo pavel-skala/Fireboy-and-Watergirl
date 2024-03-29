@@ -18,12 +18,13 @@ import {
     setMenuActive,
     setCurrentLevel,
 } from "./helpers.js";
-import { drawInGameMenu, drawMenu, checkMenuDiamondsCollision, menuDiamonds } from "./menus.js";
+import { drawInGameMenu, drawMenu, checkMenuDiamondsCollision, menuDiamonds, menuDiamondsPath } from "./menus.js";
 import { Lever } from "./classes/lever.js";
 import { Cube } from "./classes/cube.js";
 import { Door } from "./classes/door.js";
 import { Quest } from "./quests.js";
 import { drawTime, formatTime, levelTime } from "./time.js";
+import { Bridge } from "./classes/bridge.js";
 
 let bgBlocks, died, menuButtonPressed, pauseGame, collisionBlocks, ponds;
 
@@ -34,6 +35,7 @@ let allButtons = [];
 let allLevers = [];
 let allCubes = [];
 let allDoors = [];
+let allBridges = [];
 
 let levelCompleted = false;
 
@@ -97,6 +99,7 @@ function startGame() {
     allLevers = [];
     allCubes = [];
     allDoors = [];
+    allBridges = [];
 
     levelCompleted = false;
     startedTime = Date.now();
@@ -194,6 +197,19 @@ function startGame() {
             });
             allCubes.push(newCube);
             allAssets.push(newCube);
+        });
+    }
+
+    //bridges
+    if (gameData.bridges[currentLevel]) {
+        gameData.bridges[currentLevel].forEach((bridge) => {
+            const newBridge = new Bridge({
+                position: { ...bridge.position },
+                chainsCount: bridge.chainsCount,
+            });
+
+            allBridges.push(newBridge);
+            allAssets.push(newBridge);
         });
     }
 
@@ -323,33 +339,12 @@ function playGame() {
                         if (button.position.y == button.finalPosition.y) {
                             let standingOnButton = false;
                             allPlayers.forEach((player) => {
-                                if (
-                                    player.isOnBlock &&
-                                    player.hitbox.legs.position.x + player.hitbox.legs.width >=
-                                        button.hitbox.position.x &&
-                                    player.hitbox.legs.position.x <=
-                                        button.hitbox.position.x + button.hitbox.width &&
-                                    player.hitbox.position.y + player.hitbox.height >=
-                                        button.hitbox.position.y - 2 &&
-                                    player.hitbox.position.y + player.hitbox.height <=
-                                        button.hitbox.position.y + button.hitbox.height
-                                ) {
-                                    // return
+                                if (button.checkStandingOnButton(player, player.hitbox.legs)) {
                                     standingOnButton = true;
                                 }
                             });
                             allCubes.forEach((cube) => {
-                                if (
-                                    cube.isOnBlock &&
-                                    cube.hitbox.position.x + cube.hitbox.width >=
-                                        button.hitbox.position.x &&
-                                    cube.hitbox.position.x <=
-                                        button.hitbox.position.x + button.hitbox.width &&
-                                    cube.hitbox.position.y + cube.hitbox.height >=
-                                        button.hitbox.position.y - 2 &&
-                                    cube.hitbox.position.y + cube.hitbox.height <=
-                                        button.hitbox.position.y + button.hitbox.height
-                                ) {
+                                if (button.checkStandingOnButton(cube, cube.hitbox)) {
                                     standingOnButton = true;
                                 }
                             });
@@ -378,11 +373,6 @@ function playGame() {
                 }
             }
 
-            bgBlocks.draw();
-            // collisionBlocks.forEach((collisionBlock) => {
-            //     collisionBlock.draw();
-            // });
-
             allCubes.forEach((cube) => {
                 cube.draw();
                 cube.update();
@@ -399,15 +389,28 @@ function playGame() {
                 }
             });
 
+            allLevers.forEach((lever) => {
+                lever.run();
+            });
+
             allDoors.forEach((door) => {
                 door.draw();
                 door.pressed = false;
             });
 
+            allBridges.forEach((bridge) => {
+                bridge.drawChain();
+                bridge.draw();
+            });
+
+            bgBlocks.draw();
+            // collisionBlocks.forEach((collisionBlock) => {
+            //     collisionBlock.draw();
+            // });
+
             allLevers.forEach((lever) => {
                 lever.checkAngle();
                 lever.drawLever();
-                lever.run();
             });
 
             allPlayers.forEach((player) => {
@@ -495,19 +498,21 @@ function playGame() {
                 button.ramp.draw(button.pressed);
             });
         });
-        bgBlocks.draw();
-        // collisionBlocks.forEach((collisionBlock) => {
-        //     collisionBlock.draw();
-        // });
         allCubes.forEach((cube) => {
             cube.draw();
+        });
+        allLevers.forEach((lever) => {
+            lever.ramp.draw();
         });
         allDoors.forEach((door) => {
             door.draw();
         });
+        bgBlocks.draw();
+        // collisionBlocks.forEach((collisionBlock) => {
+        //     collisionBlock.draw();
+        // });
         allLevers.forEach((lever) => {
             lever.drawLever();
-            lever.ramp.draw();
         });
         allPlayers.forEach((player) => {
             player.draw();
@@ -542,6 +547,9 @@ function playGame() {
 
                 menuDiamonds[currentLevel].diamondsUnlocking.forEach((index) => {
                     menuDiamonds[index].unlocked = true;
+                });
+                menuDiamonds[currentLevel].pathUnlocking.forEach((index) => {
+                    menuDiamondsPath[index].unlocked = true;
                 });
                 endFunction("won");
             }

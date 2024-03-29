@@ -49,4 +49,16 @@ export class Button extends Sprite {
             this.hitbox.position.y--;
         }
     }
+    checkStandingOnButton(object, hitbox) {
+        if (
+            object.isOnBlock &&
+            hitbox.position.x + hitbox.width >= this.hitbox.position.x &&
+            hitbox.position.x <= this.hitbox.position.x + this.hitbox.width &&
+            hitbox.position.y + hitbox.height >= this.hitbox.position.y - 2 &&
+            hitbox.position.y + hitbox.height <= this.hitbox.position.y + this.hitbox.height
+        ) {
+            return true;
+        }
+        return false;
+    }
 }
