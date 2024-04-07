@@ -209,8 +209,8 @@ const menuButtons = {
             text: "Unlock all",
             runCode: () => {
                 unlockAllDiamonds();
-                delete menuButtons.mainMenu.unlock
-                drawMenu()
+                delete menuButtons.mainMenu.unlock;
+                drawMenu();
             },
         }),
     },

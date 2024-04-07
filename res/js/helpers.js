@@ -29,6 +29,8 @@ let continueAnimation = false;
 let endGame = false;
 let currentLevel = 1;
 let menuActive = "mainMenu";
+let levelCompleted = false;
+let allDiamonds = [];
 
 function setContinueAnimation(setValue) {
     continueAnimation = setValue;
@@ -44,6 +46,14 @@ function setCurrentLevel(setValue) {
 
 function setMenuActive(setValue) {
     menuActive = setValue;
+}
+
+function setLevelCompleted(setValue) {
+    levelCompleted = setValue;
+}
+
+function setAllDiamonds(setValue) {
+    allDiamonds = setValue;
 }
 
 let gameData = {};
@@ -77,4 +87,8 @@ export {
     setMenuActive,
     loadData,
     gameData,
+    levelCompleted,
+    setLevelCompleted,
+    allDiamonds,
+    setAllDiamonds,
 };

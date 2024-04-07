@@ -19,6 +19,7 @@ function formatTime(miliseconds) {
     if (minutes < 10) {
         minutes = "0" + minutes;
     }
+
     return { minutes, seconds };
 }
 
@@ -50,4 +51,4 @@ function drawTimeBackground(color, offset) {
     ctx.fill();
 }
 
-export {levelTime, formatTime, drawTime}
+export { levelTime, formatTime, drawTime };

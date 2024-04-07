@@ -17,12 +17,22 @@ import {
     menuActive,
     setMenuActive,
     setCurrentLevel,
+    setAllDiamonds,
+    setLevelCompleted,
+    allDiamonds,
+    levelCompleted,
 } from "./helpers.js";
-import { drawInGameMenu, drawMenu, checkMenuDiamondsCollision, menuDiamonds, menuDiamondsPath } from "./menus.js";
+import {
+    drawInGameMenu,
+    drawMenu,
+    checkMenuDiamondsCollision,
+    menuLevels,
+    menuDiamondsPath,
+} from "./menus.js";
 import { Lever } from "./classes/lever.js";
 import { Cube } from "./classes/cube.js";
 import { Door } from "./classes/door.js";
-import { Quest } from "./quests.js";
+import { quests } from "./quests.js";
 import { drawTime, formatTime, levelTime } from "./time.js";
 import { Bridge } from "./classes/bridge.js";
 
@@ -30,14 +40,12 @@ let bgBlocks, died, menuButtonPressed, pauseGame, collisionBlocks, ponds;
 
 let allAssets = [];
 let allPlayers = [];
-let allDiamonds = [];
+// let allDiamonds = [];
 let allButtons = [];
 let allLevers = [];
 let allCubes = [];
 let allDoors = [];
 let allBridges = [];
-
-let levelCompleted = false;
 
 let startedTime;
 let pausedTime = 0;
@@ -51,42 +59,6 @@ const background = new Sprite({
     imgSrc: `./res/img/maps/bg.png`,
 });
 
-let quests = [];
-quests.push(
-    new Quest({
-        position: {
-            x: 450,
-            y: 500,
-        },
-        offsetY: 220,
-        currentRow: 1,
-        requirement: {
-            variable: levelCompleted,
-            getVariable: () => {
-                return levelCompleted;
-            },
-            required: true,
-        },
-    })
-);
-quests.push(
-    new Quest({
-        position: {
-            x: 450,
-            y: 600,
-        },
-        offsetY: 350,
-        currentRow: 2,
-        requirement: {
-            variable: allDiamonds,
-            getVariable: () => {
-                return allDiamonds;
-            },
-            required: [],
-        },
-    })
-);
-
 function startGame() {
     died = false;
     menuButtonPressed = null;
@@ -94,14 +66,15 @@ function startGame() {
 
     allAssets = [];
     allPlayers = [];
-    allDiamonds = [];
+    setAllDiamonds([]);
     allButtons = [];
     allLevers = [];
     allCubes = [];
     allDoors = [];
     allBridges = [];
 
-    levelCompleted = false;
+    setLevelCompleted(false);
+
     startedTime = Date.now();
     pausedTime = 0;
 
@@ -122,7 +95,7 @@ function startGame() {
         allDiamonds.push(
             new Diamond({
                 position: diamond.position,
-                element: diamond.element,
+                type: diamond.type,
             })
         );
     });
@@ -504,6 +477,10 @@ function playGame() {
         allLevers.forEach((lever) => {
             lever.ramp.draw();
         });
+        allBridges.forEach((bridge) => {
+            bridge.drawChain();
+            bridge.draw();
+        });
         allDoors.forEach((door) => {
             door.draw();
         });
@@ -533,22 +510,27 @@ function playGame() {
             if (opacity <= 0) {
                 opacity = 0;
                 clearInterval(dissapearing);
+
                 let questCount = 0;
-                quests.forEach((quest) => {
+                menuLevels[currentLevel].quests.forEach((quest) => {
                     quest.setVariable();
                     quest.check();
                     if (quest.completed) {
-                        questCount++;
+                        if (menuLevels[currentLevel].quests.length == 1) {
+                            questCount += 2;
+                        } else {
+                            questCount++;
+                        }
                     }
                 });
                 if (questCount > menuDiamonds[currentLevel].questsStatus) {
                     menuDiamonds[currentLevel].setQuestsStatus(questCount);
                 }
 
-                menuDiamonds[currentLevel].diamondsUnlocking.forEach((index) => {
-                    menuDiamonds[index].unlocked = true;
+                menuLevels[currentLevel].levelsUnlocking.forEach((index) => {
+                    menuLevels[index].unlocked = true;
                 });
-                menuDiamonds[currentLevel].pathUnlocking.forEach((index) => {
+                menuLevels[currentLevel].pathUnlocking.forEach((index) => {
                     menuDiamondsPath[index].unlocked = true;
                 });
                 endFunction("won");
@@ -626,8 +608,8 @@ function playGame() {
         }
 
         if (menuActive == "mainMenu") {
-            for (const index in menuDiamonds) {
-                if (checkMenuDiamondsCollision(mousePos, menuDiamonds[index])) {
+            for (const index in menuLevels) {
+                if (checkMenuDiamondsCollision(mousePos, menuLevels[index])) {
                     setCurrentLevel(index);
                     setMenuActive(null);
                     startGame();
@@ -709,6 +691,22 @@ function playGame() {
                 case player.keys.right:
                     player.keys.pressed.right = false;
                     break;
+            }
+        });
+    });
+
+    document.addEventListener("visibilitychange", () => {
+        allPlayers.forEach((player) => {
+            for (const key in player.keys.pressed) {
+                player.keys.pressed[key] = false;
+            }
+        });
+    });
+
+    document.addEventListener("contextmenu", () => {
+        allPlayers.forEach((player) => {
+            for (const key in player.keys.pressed) {
+                player.keys.pressed[key] = false;
             }
         });
     });

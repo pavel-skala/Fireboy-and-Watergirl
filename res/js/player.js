@@ -1,5 +1,4 @@
 import { Sprite } from "./sprite.js";
-import { ctx } from "./helpers.js";
 
 export class Player extends Sprite {
     constructor({
@@ -147,11 +146,11 @@ export class Player extends Sprite {
         for (let i = 0; i < this.diamonds.length; i++) {
             let diamond = this.diamonds[i];
             if (
-                this.element == diamond.element &&
-                this.hitbox.position.x <= diamond.position.x + diamond.width &&
-                this.hitbox.position.x + this.hitbox.width >= diamond.position.x &&
-                this.hitbox.position.y <= diamond.position.y + diamond.height &&
-                this.hitbox.position.y + this.hitbox.height >= diamond.position.y
+                (diamond.type == "final" || this.element == diamond.type) &&
+                this.hitbox.position.x <= diamond.hitbox.position.x + diamond.hitbox.width &&
+                this.hitbox.position.x + this.hitbox.width >= diamond.hitbox.position.x &&
+                this.hitbox.position.y <= diamond.hitbox.position.y + diamond.hitbox.height &&
+                this.hitbox.position.y + this.hitbox.height >= diamond.hitbox.position.y
             ) {
                 //collect diamond
                 this.diamonds.splice(i, 1);

@@ -30,5 +30,21 @@
             },
             "element": "water"
         }
+    ],
+    "3": [
+        {
+            "position": {
+                "x": 1116,
+                "y": 432
+            },
+            "element": "fire"
+        },
+        {
+            "position": {
+                "x": 210,
+                "y": 900
+            },
+            "element": "water"
+        }
     ]
 }

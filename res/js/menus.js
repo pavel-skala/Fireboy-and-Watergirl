@@ -4,7 +4,7 @@ import { canvas, ctx, currentLevel } from "./helpers.js";
 import { quests } from "./game.js";
 import { levelTime } from "./time.js";
 import { drawArrow } from "./quests.js";
-import { MenuDiamond } from "./menuDiamond.js";
+import { MenuLevel } from "./menuLevel.js";
 
 const menuBg = new Sprite({
     position: {
@@ -49,7 +49,7 @@ const menusTexts = {
         ctx.fillStyle = "yellow";
         ctx.fillText(fullText, 600, menuBg.position.y + 160);
 
-        quests.forEach((quest) => {
+        menuLevels[currentLevel].quests.forEach((quest) => {
             quest.updatePositionY(menuBg.position.y);
             quest.draw();
         });
@@ -57,12 +57,12 @@ const menusTexts = {
         drawArrow(menuBg.position.y);
 
         menuWonDiamond.position.y = menuBg.position.y + 280;
-        menuWonDiamond.setQuestsStatus(menuDiamonds[currentLevel].questsStatus);
+        menuWonDiamond.setQuestsStatus(menuLevels[currentLevel].questsStatus);
         menuWonDiamond.drawFullDiamond();
     },
 };
 
-let menuWonDiamond = new MenuDiamond({
+let menuWonDiamond = new MenuLevel({
     position: {
         x: 900,
         y: 270,
@@ -100,8 +100,8 @@ function drawMenu() {
     }
 
     //diamonds
-    for (const key in menuDiamonds) {
-        const diamond = menuDiamonds[key];
+    for (const key in menuLevels) {
+        const diamond = menuLevels[key];
 
         diamond.drawFullDiamond();
     }
@@ -136,8 +136,8 @@ function checkMenuDiamondsCollision(pos, diamond) {
 }
 
 function unlockAllDiamonds() {
-    for (const index in menuDiamonds) {
-        menuDiamonds[index].unlocked = true;
+    for (const index in menuLevels) {
+        menuLevels[index].unlocked = true;
     }
     for (const index in menuDiamondsPath) {
         menuDiamondsPath[index].unlocked = true;
@@ -145,8 +145,8 @@ function unlockAllDiamonds() {
     drawMenu();
 }
 
-let menuDiamonds = {
-    1: new MenuDiamond({
+let menuLevels = {
+    1: new MenuLevel({
         position: {
             x: canvas.width * 0.48,
             y: canvas.height * 0.9,
@@ -154,17 +154,30 @@ let menuDiamonds = {
         questsStatus: 0,
         unlocked: true,
         pathUnlocking: [1],
-        diamondsUnlocking: [2],
+        levelsUnlocking: [2],
+        quests: [quests.levelCompleted, quests.allDiamonds],
     }),
-    2: new MenuDiamond({
+    2: new MenuLevel({
         position: {
             x: canvas.width * 0.48,
             y: canvas.height * 0.75,
         },
         questsStatus: 0,
         unlocked: false,
+        pathUnlocking: [2],
+        levelsUnlocking: [3],
+        quests: [quests.levelCompleted, quests.allDiamonds],
+    }),
+    3: new MenuLevel({
+        position: {
+            x: canvas.width * 0.48,
+            y: canvas.height * 0.6,
+        },
+        questsStatus: 0,
+        unlocked: false,
         pathUnlocking: [],
-        diamondsUnlocking: [],
+        levelsUnlocking: [],
+        quests: [quests.levelCompleted, quests.allDiamonds],
     }),
 };
 
@@ -180,13 +193,24 @@ let menuDiamondsPath = {
         },
         unlocked: false,
     },
+    2: {
+        position: {
+            x: 691,
+            y: canvas.height * 0.75,
+        },
+        finalPosition: {
+            x: 691,
+            y: canvas.height * 0.66,
+        },
+        unlocked: false,
+    },
 };
 
 export {
     drawMenu,
     drawInGameMenu,
     checkMenuDiamondsCollision,
-    menuDiamonds,
+    menuLevels,
     menuDiamondsBorderColor,
     unlockAllDiamonds,
     menuDiamondsPath,

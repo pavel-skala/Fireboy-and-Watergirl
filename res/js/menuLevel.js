@@ -2,8 +2,8 @@ import { ctx } from "./helpers.js";
 import { menuDiamondsBorderColor } from "./menus.js";
 import { Sprite } from "./sprite.js";
 
-export class MenuDiamond extends Sprite {
-    constructor({ position, questsStatus, unlocked, pathUnlocking, diamondsUnlocking }) {
+export class MenuLevel extends Sprite {
+    constructor({ position, questsStatus, unlocked, pathUnlocking, diamondsUnlocking, quests }) {
         const imgSrc = "./res/img/menuDiamonds.png";
         const imgRows = 3;
 
@@ -20,6 +20,8 @@ export class MenuDiamond extends Sprite {
         this.diamondsUnlocking = diamondsUnlocking;
 
         this.borderColor;
+
+        this.quests = quests
     }
     setQuestsStatus(num) {
         this.questsStatus = num;

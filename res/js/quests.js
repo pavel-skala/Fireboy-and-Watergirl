@@ -1,7 +1,7 @@
-import { ctx } from "./helpers.js";
+import { allDiamonds, ctx, levelCompleted } from "./helpers.js";
 import { Sprite } from "./sprite.js";
 
-export class Quest {
+class Quest {
     constructor({ position, offsetY, requirement, currentRow }) {
         this.position = position;
         this.requirement = requirement;
@@ -13,7 +13,7 @@ export class Quest {
                 y: this.position.y,
             },
             imgSrc: "./res/img/quests.png",
-            imgRows: 2,
+            imgRows: 3,
             currentRow: currentRow,
         });
 
@@ -50,7 +50,7 @@ export class Quest {
     }
 }
 
-export function drawArrow(menuPos) {
+function drawArrow(menuPos) {
     let startX = 700;
     let startY = menuPos + 310;
     let size = 100;
@@ -69,3 +69,39 @@ export function drawArrow(menuPos) {
     ctx.lineTo(arrowX, arrowBottomY);
     ctx.stroke();
 }
+
+let quests = {};
+
+quests.levelCompleted = new Quest({
+    position: {
+        x: 450,
+        y: 500,
+    },
+    offsetY: 220,
+    currentRow: 1,
+    requirement: {
+        variable: levelCompleted,
+        getVariable: () => {
+            return levelCompleted;
+        },
+        required: true,
+    },
+});
+
+quests.allDiamonds = new Quest({
+    position: {
+        x: 450,
+        y: 600,
+    },
+    offsetY: 350,
+    currentRow: 2,
+    requirement: {
+        variable: allDiamonds,
+        getVariable: () => {
+            return allDiamonds;
+        },
+        required: [],
+    },
+});
+
+export { drawArrow, quests };

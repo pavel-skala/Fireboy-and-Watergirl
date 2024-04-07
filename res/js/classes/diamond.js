@@ -1,9 +1,9 @@
 import { Sprite } from "../sprite.js";
 
 export class Diamond extends Sprite {
-    constructor({ position, element }) {
+    constructor({ position, type }) {
         let currentRow = 1;
-        if (element == "fire") {
+        if (type == "fire") {
             currentRow = 2;
         }
 
@@ -12,6 +12,12 @@ export class Diamond extends Sprite {
 
         super({ position, imgSrc, currentRow, imgRows });
         this.position = position;
-        this.element = element;
+        this.type = type;
+
+        this.hitbox = {
+            position: this.position,
+            width: 44,
+            height: 36,
+        };
     }
 }
