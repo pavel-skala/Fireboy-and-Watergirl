@@ -438,7 +438,7 @@ function playGame() {
 
             //both doors opened
             if (allDoors[0].opened == true && allDoors[1].opened == true) {
-                levelCompleted = true;
+                setLevelCompleted(true);
                 levelTime.minutes = formatedTime.minutes;
                 levelTime.seconds = formatedTime.seconds;
                 playersDissapearing();
