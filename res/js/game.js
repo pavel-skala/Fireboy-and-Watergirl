@@ -2,10 +2,10 @@ import { Player } from "./player.js";
 import { Sprite } from "./sprite.js";
 import { levels } from "./collisionBlocks.js";
 import { createObjectsFromArray } from "./collisions.js";
-import { Diamond } from "./classes/diamond.js";
-import { Button } from "./classes/button.js";
-import { Ramp } from "./classes/ramp.js";
-import { pauseButton, menuButtons, checkButtonCollision } from "./buttons.js";
+import { Diamond } from "./ingameAssets/diamond.js";
+import { Button } from "./ingameAssets/button.js";
+import { Ramp } from "./ingameAssets/ramp.js";
+import { pauseButton, menuButtons, checkButtonCollision } from "./menu/buttons.js";
 import {
     getMousePos,
     continueAnimation,
@@ -28,19 +28,18 @@ import {
     checkMenuDiamondsCollision,
     menuLevels,
     menuDiamondsPath,
-} from "./menus.js";
-import { Lever } from "./classes/lever.js";
-import { Cube } from "./classes/cube.js";
-import { Door } from "./classes/door.js";
-import { quests } from "./quests.js";
+} from "./menu/menus.js";
+import { Lever } from "./ingameAssets/lever.js";
+import { Cube } from "./ingameAssets/cube.js";
+import { Door } from "./ingameAssets/door.js";
+import { quests } from "./menu/quests.js";
 import { drawTime, formatTime, levelTime } from "./time.js";
-import { Bridge } from "./classes/bridge.js";
+import { Bridge } from "./ingameAssets/bridge.js";
 
 let bgBlocks, died, menuButtonPressed, pauseGame, collisionBlocks, ponds;
 
 let allAssets = [];
 let allPlayers = [];
-// let allDiamonds = [];
 let allButtons = [];
 let allLevers = [];
 let allCubes = [];
@@ -278,7 +277,6 @@ function startGame() {
 
 function playGame() {
     drawMenu();
-    // startGame();
 
     let now;
     let delta;
@@ -448,7 +446,8 @@ function playGame() {
             pauseButton.draw();
 
             if (died) {
-                endFunction("lost");
+                setMenuActive("lost");
+                drawMenuAnimation(menuActive, "up");
                 return;
             } else if (pauseGame) {
                 setMenuActive("paused");
@@ -533,7 +532,8 @@ function playGame() {
                 menuLevels[currentLevel].pathUnlocking.forEach((index) => {
                     menuDiamondsPath[index].unlocked = true;
                 });
-                endFunction("won");
+                setMenuActive("won");
+                drawMenuAnimation(menuActive, "up");
             }
             allDoors.forEach((door) => {
                 door.draw();
@@ -545,12 +545,6 @@ function playGame() {
                 player.legs.draw();
             });
         }, 50);
-    }
-
-    function endFunction(status) {
-        setMenuActive(status);
-
-        drawMenuAnimation(status, "up");
     }
 
     function drawMenuAnimation(menuName, direction) {

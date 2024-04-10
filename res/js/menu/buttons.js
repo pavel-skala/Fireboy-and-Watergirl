@@ -1,5 +1,5 @@
-import { Sprite } from "./sprite.js";
-import { canvas, ctx, setContinueAnimation, setEndGame, setMenuActive } from "./helpers.js";
+import { Sprite } from "../sprite.js";
+import { canvas, ctx, setContinueAnimation, setEndGame, setMenuActive } from "../helpers.js";
 import { drawMenu, unlockAllDiamonds } from "./menus.js";
 
 //check collision for button in menu
@@ -13,7 +13,17 @@ function checkButtonCollision(pos, button) {
 }
 
 class MenuButton {
-    constructor({ position, width, height, yOffset, text, runCode }) {
+    constructor({
+        position,
+        width,
+        height,
+        yOffset,
+        text,
+        runCode,
+        outerColor = "#929292",
+        borderColor = "black",
+        mainColor = "#848484",
+    }) {
         this.position = position;
 
         this.width = width;
@@ -33,8 +43,10 @@ class MenuButton {
             fontSize: 75,
         };
 
-        this.borderColor = "#000000";
-        this.mainColor = "#848484";
+        this.outerColor = outerColor;
+        this.borderColor = borderColor;
+        this.mainColor = mainColor;
+
         this.pressed = false;
 
         this.textGap;
@@ -51,11 +63,15 @@ class MenuButton {
             case 6:
                 this.textGap = 10;
                 break;
+            case 7:
+                this.textGap = 30;
+                break;
             case 8:
                 this.textGap = 30;
                 break;
             case 10:
                 this.textGap = 20;
+                break;
         }
     }
     draw() {
@@ -74,7 +90,7 @@ class MenuButton {
         ctx.fillText(this.text, this.position.x + this.textGap, this.position.y + 80);
     }
     scaleDown() {
-        ctx.fillStyle = "#929292";
+        ctx.fillStyle = this.outerColor;
         ctx.fillRect(this.position.x - 1, this.position.y - 1, this.width + 2, this.height + 2);
         this.position.x += 1;
         this.position.y += 1;
@@ -207,6 +223,9 @@ const menuButtons = {
             height: canvas.height * 0.1,
             yOffset: canvas.height * 0.43,
             text: "Unlock all",
+            mainColor: "#5c4614",
+            borderColor: "#5c4614",
+            outerColor: "#5c4614",
             runCode: () => {
                 unlockAllDiamonds();
                 delete menuButtons.mainMenu.unlock;

@@ -1,5 +1,5 @@
-import { allDiamonds, ctx, levelCompleted } from "./helpers.js";
-import { Sprite } from "./sprite.js";
+import { allDiamonds, ctx, levelCompleted } from "../helpers.js";
+import { Sprite } from "../sprite.js";
 
 class Quest {
     constructor({ position, offsetY, requirement, currentRow }) {
@@ -38,7 +38,11 @@ class Quest {
         ) {
             this.status.currentRow = 2;
             this.completed = true;
+            return
         }
+
+        this.status.currentRow = 1;
+        this.completed = false;
     }
     updatePositionY(menuPos) {
         this.quest.position.y = menuPos + this.offsetY;

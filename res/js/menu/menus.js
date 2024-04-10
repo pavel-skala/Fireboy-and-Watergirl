@@ -1,8 +1,8 @@
-import { Sprite } from "./sprite.js";
+import { Sprite } from "../sprite.js";
 import { menuButtons } from "./buttons.js";
-import { canvas, ctx, currentLevel } from "./helpers.js";
-import { quests } from "./game.js";
-import { levelTime } from "./time.js";
+import { canvas, ctx, currentLevel } from "../helpers.js";
+import { quests } from "../game.js";
+import { levelTime } from "../time.js";
 import { drawArrow } from "./quests.js";
 import { MenuLevel } from "./menuLevel.js";
 
@@ -87,6 +87,15 @@ function drawInGameMenu(name, transform) {
 function drawMenu() {
     ctx.fillStyle = "#5c4614";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const fullText = "Fireboy and Watergirl";
+    ctx.font = "70px Cinzel";
+    ctx.lineWidth = 7;
+    ctx.strokeStyle = "black";
+    ctx.strokeText(fullText, canvas.width * 0.24, canvas.height * 0.1);
+
+    ctx.fillStyle = "yellow";
+    ctx.fillText(fullText, canvas.width * 0.24, canvas.height * 0.1);
 
     //buttons
     for (const btnName in menuButtons.mainMenu) {
@@ -175,6 +184,17 @@ let menuLevels = {
         },
         questsStatus: 0,
         unlocked: false,
+        pathUnlocking: [3],
+        levelsUnlocking: [4],
+        quests: [quests.levelCompleted, quests.allDiamonds],
+    }),
+    4: new MenuLevel({
+        position: {
+            x: canvas.width * 0.48,
+            y: canvas.height * 0.45,
+        },
+        questsStatus: 0,
+        unlocked: false,
         pathUnlocking: [],
         levelsUnlocking: [],
         quests: [quests.levelCompleted, quests.allDiamonds],
@@ -204,14 +224,25 @@ let menuDiamondsPath = {
         },
         unlocked: false,
     },
+    3: {
+        position: {
+            x: 691,
+            y: canvas.height * 0.6,
+        },
+        finalPosition: {
+            x: 691,
+            y: canvas.height * 0.51,
+        },
+        unlocked: false,
+    },
 };
 
 export {
     drawMenu,
     drawInGameMenu,
     checkMenuDiamondsCollision,
-    menuLevels,
-    menuDiamondsBorderColor,
     unlockAllDiamonds,
+    menuLevels,
     menuDiamondsPath,
+    menuDiamondsBorderColor,
 };

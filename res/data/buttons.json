@@ -92,5 +92,37 @@
                 "rotated": false
             }
         }
+    ],
+    "4": [
+        {
+            "buttons": [
+                {
+                    "position": {
+                        "x": 684,
+                        "y": 990
+                    }
+                },
+                {
+                    "position": {
+                        "x": 1278,
+                        "y": 990
+                    }
+                }
+            ],
+            "ramp": {
+                "position": {
+                    "x": 936,
+                    "y": 900
+                },
+                "boxCount": 3,
+                "color": "#B8B8B8",
+                "finalPosition": {
+                    "x": 936,
+                    "y": 792
+                },
+                "finalColor": "#FEFEFE",
+                "rotated": true
+            }
+        }
     ]
 }

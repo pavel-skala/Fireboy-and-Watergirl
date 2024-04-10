@@ -5,10 +5,12 @@ export class Diamond extends Sprite {
         let currentRow = 1;
         if (type == "fire") {
             currentRow = 2;
+        } else if (type == "final") {
+            currentRow = 3;
         }
 
         const imgSrc = "./res/img/diamonds.png";
-        const imgRows = 2;
+        const imgRows = 3;
 
         super({ position, imgSrc, currentRow, imgRows });
         this.position = position;

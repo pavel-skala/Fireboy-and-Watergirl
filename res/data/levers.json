@@ -22,5 +22,51 @@
                 "rotated": false
             }
         }
+    ],
+    "4": [
+        {
+            "lever": {
+                "position": {
+                    "x": 108,
+                    "y": 530
+                }
+            },
+            "ramp": {
+                "position": {
+                    "x": 612,
+                    "y": 612
+                },
+                "boxCount": 3,
+                "color": "#092DB8",
+                "finalPosition": {
+                    "x": 504,
+                    "y": 612
+                },
+                "finalColor": "#0C3AEE",
+                "rotated": false
+            }
+        },
+        {
+            "lever": {
+                "position": {
+                    "x": 1116,
+                    "y": 819
+                }
+            },
+            "ramp": {
+                "position": {
+                    "x": 756,
+                    "y": 792
+                },
+                "boxCount": 3,
+                "color": "#b00101",
+                "finalPosition": {
+                    "x": 864,
+                    "y": 792
+                },
+                "finalColor": "#FE0000",
+                "rotated": false
+            }
+        }
     ]
 }

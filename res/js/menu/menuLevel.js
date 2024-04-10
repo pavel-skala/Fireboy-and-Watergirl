@@ -1,9 +1,9 @@
-import { ctx } from "./helpers.js";
+import { ctx } from "../helpers.js";
 import { menuDiamondsBorderColor } from "./menus.js";
-import { Sprite } from "./sprite.js";
+import { Sprite } from "../sprite.js";
 
 export class MenuLevel extends Sprite {
-    constructor({ position, questsStatus, unlocked, pathUnlocking, diamondsUnlocking, quests }) {
+    constructor({ position, questsStatus, unlocked, pathUnlocking, levelsUnlocking, quests }) {
         const imgSrc = "./res/img/menuDiamonds.png";
         const imgRows = 3;
 
@@ -17,14 +17,16 @@ export class MenuLevel extends Sprite {
         this.questsStatus = questsStatus;
         this.unlocked = unlocked;
         this.pathUnlocking = pathUnlocking;
-        this.diamondsUnlocking = diamondsUnlocking;
+        this.levelsUnlocking = levelsUnlocking;
 
         this.borderColor;
 
-        this.quests = quests
+        this.quests = quests;
     }
     setQuestsStatus(num) {
         this.questsStatus = num;
+
+        //final diamond
         this.currentRow = num + 1;
     }
     drawFullDiamond() {
