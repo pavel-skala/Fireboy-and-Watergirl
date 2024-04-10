@@ -523,8 +523,8 @@ function playGame() {
                         }
                     }
                 });
-                if (questCount > menuDiamonds[currentLevel].questsStatus) {
-                    menuDiamonds[currentLevel].setQuestsStatus(questCount);
+                if (questCount > menuLevels[currentLevel].questsStatus) {
+                    menuLevels[currentLevel].setQuestsStatus(questCount);
                 }
 
                 menuLevels[currentLevel].levelsUnlocking.forEach((index) => {
