@@ -1,8 +1,10 @@
+import { ctx } from "../helpers.js";
 import { Sprite } from "../sprite.js";
 
-export class Cube extends Sprite {
-    constructor({ position, collisionBlocks, allAssets, players }) {
-        const imgSrc = "./res/img/cube.png";
+export class Ball extends Sprite {
+    constructor({ position, collisionBlocks, allAssets }) {
+        const imgSrc = "./res/img/ball.png";
+
         super({ position, imgSrc });
 
         this.position = position;
@@ -14,56 +16,55 @@ export class Cube extends Sprite {
         this.hitbox = {
             position: {
                 x: this.position.x + 2,
-                y: this.position.y + 1,
+                y: this.position.y + 2,
             },
-            width: 64,
-            height: 66,
+            width: 28,
+            height: 28,
         };
-
-        this.shape = "cube";
-        this.isOnBlock = false;
-        this.isOnRamp = false;
-
         this.collisionBlocks = collisionBlocks;
         this.allAssets = allAssets;
-        this.players = players;
 
-        this.rampBlocked = false;
+        this.shape = "ball";
+
+        this.isOnBlock = false;
+
+        this.lastPosition = { ...this.position };
+        this.angle = 90 * (Math.PI / 180);
     }
     hitboxPositionCalc() {
         this.hitbox.position = {
-            x: this.position.x + 2,
+            x: this.position.x + 1,
             y: this.position.y + 1,
         };
     }
     update() {
+        this.lastPosition.x = this.position.x;
         this.position.x += this.velocity.x;
 
         this.hitboxPositionCalc();
         this.horizontalCollision(this.allAssets);
 
         this.hitboxPositionCalc();
-        this.horizontalCollision(this.players);
-
-        this.hitboxPositionCalc();
         this.horizontalCollision(this.collisionBlocks);
 
-        this.velocity.x = 0;
+        if (this.lastPosition.x != this.position.x) {
+            this.angle += this.velocity.x * (Math.PI / 180) * 2;
+        }
+
+        if (this.velocity.x != 0) {
+            this.velocity.x *= 0.995;
+
+            if (Math.abs(this.velocity.x) < 0.01) {
+                this.velocity.x = 0;
+            }
+        }
         this.gravity();
 
-        this.isOnBlock = false;
-        this.rampBlocked = false;
         this.hitboxPositionCalc();
         this.verticalCollision(this.collisionBlocks);
 
-        this.isOnRamp = false;
         this.hitboxPositionCalc();
         this.verticalCollision(this.allAssets);
-
-        this.hitboxPositionCalc();
-        this.verticalCollision(this.players);
-
-        this.hitboxPositionCalc();
     }
     gravity() {
         this.velocity.y += 0.25;
@@ -72,7 +73,7 @@ export class Cube extends Sprite {
     horizontalCollision(blocks) {
         for (let i = 0; i < blocks.length; i++) {
             const block = blocks[i];
-            //block is this cube
+            //block is this ball
             if (block == this) continue;
 
             if (
@@ -81,48 +82,39 @@ export class Cube extends Sprite {
                 this.hitbox.position.y + this.hitbox.height >= block.hitbox.position.y + 1 &&
                 this.hitbox.position.y <= block.hitbox.position.y + block.hitbox.height
             ) {
-                if (block.shape == "square" || block.shape == "ramp" || block.shape == "lever") {
-                    if (this.rampBlocked) {
-                        break;
-                    }
-
-                    //cube going right
+                if (block.shape == "square" || block.shape == "ramp") {
+                    //ball going right
                     if (this.velocity.x > 0) {
+                        this.velocity.x = -this.velocity.x / 2;
                         const offset = this.hitbox.position.x - this.position.x + this.hitbox.width;
                         this.position.x = block.hitbox.position.x - offset - 0.01;
                         break;
                     }
-                    //cube going left
+                    //ball going left
                     else if (this.velocity.x < 0) {
+                        this.velocity.x = -this.velocity.x / 2;
                         const offset = this.hitbox.position.x - this.position.x;
                         this.position.x =
                             block.hitbox.position.x + block.hitbox.width - offset + 0.01;
                         break;
                     }
-                } else if (block.constructor.name == "Player") {
-                    //head collision
+                } else if (
+                    block.shape == "triangle" &&
+                    block.direction.y == "up" &&
+                    block.direction.x == "left"
+                ) {
                     if (
-                        this.hitbox.position.y + this.hitbox.height >
-                            Math.round(block.hitbox.position.y) &&
-                        this.hitbox.position.y <=
-                            block.hitbox.position.y + block.hitbox.height - block.hitbox.legs.height
+                        this.hitbox.position.y <= block.hitbox.position.y + block.hitbox.height &&
+                        this.hitbox.position.y + this.hitbox.height > block.hitbox.height &&
+                        this.hitbox.position.x < block.hitbox.position.x + block.hitbox.width &&
+                        this.hitbox.position.x + this.hitbox.width >
+                            block.hitbox.position.x + block.hitbox.width &&
+                        this.velocity.x < 0
                     ) {
-                        //cube going to left
-                        if (this.velocity.x < 0) {
-                            block.velocity.x -= 1;
-                            const offset = this.hitbox.position.x - this.position.x;
-                            this.position.x =
-                                block.hitbox.position.x + block.hitbox.width - offset + 0.01;
-                            break;
-                        }
-                        //cube going to right
-                        else if (this.velocity.x > 0) {
-                            block.velocity.x += 1;
-                            const offset =
-                                this.hitbox.position.x - this.position.x + this.hitbox.width;
-                            this.position.x = block.hitbox.position.x - offset - 0.01;
-                            break;
-                        }
+                        const offset = this.hitbox.position.x - this.position.x;
+                        this.position.x =
+                            block.hitbox.position.x + block.hitbox.width - offset + 0.01;
+                        break;
                     }
                 }
             }
@@ -143,21 +135,51 @@ export class Cube extends Sprite {
 
             if (xPos < 1) xPos = 0;
         }
-
         return xPos;
     }
     triangleChangePosition(block, xPos) {
-        if (this.hitbox.position.y + this.hitbox.height >= block.hitbox.position.y + xPos) {
+        //for triangle up
+        if (
+            block.direction.y == "up" &&
+            this.hitbox.position.y + this.hitbox.height >= block.hitbox.position.y + xPos
+        ) {
             this.isOnBlock = true;
-            this.velocity.y = 0;
             const offset = this.hitbox.position.y + this.hitbox.height - this.position.y;
             this.position.y = block.hitbox.position.y + xPos - offset - 0.01;
+            this.velocity.y = 0;
+
+            //ball changing velocity at triangle
+            if (block.direction.x == "left") {
+                if (this.velocity.x > 0.3) {
+                    this.velocity.x *= 0.9;
+                } else this.velocity.x--;
+            } else if (block.direction.x == "right") {
+                if (this.velocity.x < -0.3) {
+                    this.velocity.x *= 0.9;
+                } else this.velocity.x++;
+            }
+        }
+        //for triangle down
+        else if (
+            block.direction.y == "down" &&
+            this.hitbox.position.y < block.hitbox.position.y + block.hitbox.height - xPos
+        ) {
+            const offset = this.hitbox.position.y - this.position.y;
+            this.position.y = block.hitbox.position.y + block.hitbox.height - xPos - offset + 0.01;
+            this.velocity.y = 0;
+
+            if (block.direction.x == "left" && this.velocity.x > 0) {
+                this.velocity.x = -this.velocity.x / 3;
+            } else if (block.direction.x == "right" && this.velocity.x < 0) {
+                this.velocity.x = -this.velocity.x / 3;
+            }
+            this.velocity.y++;
         }
     }
     verticalCollision(blocks) {
         for (let i = 0; i < blocks.length; i++) {
             const block = blocks[i];
-            //block is this cube
+            //block is this ball
             if (block == this) continue;
 
             if (
@@ -166,23 +188,8 @@ export class Cube extends Sprite {
                 this.hitbox.position.y + this.hitbox.height >= block.hitbox.position.y &&
                 this.hitbox.position.y <= block.hitbox.position.y + block.hitbox.height
             ) {
-                if (block.shape == "square" || block.shape == "ramp" || block.shape == "lever") {
-                    if (this.isOnRamp) {
-                        this.rampBlocked = true;
-                        break;
-                    }
-                    //cube blocking ramp down
-                    if (
-                        this.isOnBlock &&
-                        block.shape == "ramp" &&
-                        Math.round(this.hitbox.position.y) ==
-                            block.hitbox.position.y + block.hitbox.height
-                    ) {
-                        block.blocked = true;
-                        block.blockedDirection = "down";
-                        break;
-                    }
-                    //cube top collision
+                if (block.shape == "square" || block.shape == "ramp") {
+                    //ball top collision
                     if (
                         this.hitbox.position.y <= block.hitbox.position.y + block.hitbox.height &&
                         this.hitbox.position.y >= block.hitbox.position.y
@@ -193,7 +200,7 @@ export class Cube extends Sprite {
                             block.hitbox.position.y + block.hitbox.height - offset + 0.01;
                         break;
                     }
-                    //cube going down bottom collision
+                    //ball going down bottom collision
                     if (
                         this.velocity.y > 0 &&
                         this.hitbox.position.y + this.hitbox.height >= block.hitbox.position.y
@@ -203,6 +210,8 @@ export class Cube extends Sprite {
                         }
                         if (block.shape == "ramp") {
                             this.isOnRamp = true;
+                            if (this.velocity.x > 0) this.velocity.x += 0.005;
+                            else if (this.velocity.x < 0) this.velocity.x -= 0.005;
                         }
                         this.isOnBlock = true;
                         const offset =
@@ -214,39 +223,6 @@ export class Cube extends Sprite {
                 } else if (block.shape == "button") {
                     block.pressed = true;
                     break;
-                } else if (block.constructor.name == "Player") {
-                    //cube going on players head
-                    if (
-                        this.velocity.y > 0 &&
-                        this.hitbox.position.y + this.hitbox.height > block.hitbox.position.y &&
-                        this.hitbox.position.y + this.hitbox.height < block.hitbox.legs.position.y
-                    ) {
-                        const offset =
-                            this.hitbox.position.y + this.hitbox.height - this.position.y;
-                        this.velocity.y = 0;
-                        this.position.y = block.hitbox.position.y - offset - 0.01;
-                        break;
-                    }
-
-                    //player going down head collision
-                    if (
-                        this.hitbox.position.y >=
-                        block.hitbox.position.y + block.hitbox.height - block.hitbox.legs.height
-                    ) {
-                        //player going left
-                        if (this.hitbox.position.x >= block.hitbox.position.x) {
-                            block.sliding.left = true;
-                            block.position.x -= 2;
-                            this.position.x += 2;
-                        }
-                        //player going right
-                        else {
-                            block.sliding.right = true;
-                            block.position.x += 2;
-                            this.position.x -= 2;
-                        }
-                        break;
-                    }
                 }
                 //triangle collision
                 else if (block.shape == "triangle" && block.direction.y == "up") {
@@ -266,6 +242,33 @@ export class Cube extends Sprite {
                         block.direction.x == "right" &&
                         this.hitbox.position.x >= block.hitbox.position.x &&
                         this.hitbox.position.x < block.hitbox.position.x + block.hitbox.width
+                    ) {
+                        let xPos = this.calculateXPos(block);
+
+                        this.triangleChangePosition(block, xPos);
+                        break;
+                    }
+                }
+                //triangle collision
+                else if (block.shape == "triangle" && block.direction.y == "down") {
+                    //triangle left
+                    if (
+                        block.direction.x == "left" &&
+                        this.hitbox.position.x + this.hitbox.width >= block.hitbox.position.x &&
+                        this.hitbox.position.x + this.hitbox.width <=
+                            block.hitbox.position.x + block.hitbox.width &&
+                        this.hitbox.position.y > block.hitbox.position.y
+                    ) {
+                        let xPos = this.calculateXPos(block);
+                        this.triangleChangePosition(block, xPos);
+                        break;
+                    }
+                    //triangle right
+                    else if (
+                        block.direction.x == "right" &&
+                        this.hitbox.position.x < block.hitbox.position.x + block.hitbox.width &&
+                        this.hitbox.position.x + this.hitbox.width > block.hitbox.position.x &&
+                        this.hitbox.position.y > block.hitbox.position.y
                     ) {
                         let xPos = this.calculateXPos(block);
 

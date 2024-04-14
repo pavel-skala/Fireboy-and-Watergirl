@@ -68,5 +68,51 @@
                 "rotated": false
             }
         }
+    ],
+    "5": [
+        {
+            "lever": {
+                "position": {
+                    "x": 216,
+                    "y": 962
+                }
+            },
+            "ramp": {
+                "position": {
+                    "x": 540,
+                    "y": 252
+                },
+                "boxCount": 5,
+                "color": "#009201",
+                "finalPosition": {
+                    "x": 540,
+                    "y": 108
+                },
+                "finalColor": "#00C900",
+                "rotated": true
+            }
+        },
+        {
+            "lever": {
+                "position": {
+                    "x": 540,
+                    "y": 962
+                }
+            },
+            "ramp": {
+                "position": {
+                    "x": 684,
+                    "y": 252
+                },
+                "boxCount": 5,
+                "color": "#b00101",
+                "finalPosition": {
+                    "x": 684,
+                    "y": 108
+                },
+                "finalColor": "#FE0000",
+                "rotated": true
+            }
+        }
     ]
 }

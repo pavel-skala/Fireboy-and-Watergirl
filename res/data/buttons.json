@@ -124,5 +124,55 @@
                 "rotated": true
             }
         }
+    ],
+    "5": [
+        {
+            "buttons": [
+                {
+                    "position": {
+                        "x": 1296,
+                        "y": 990
+                    }
+                }
+            ],
+            "ramp": {
+                "position": {
+                    "x": 1260,
+                    "y": 787
+                },
+                "boxCount": 3,
+                "color": "#092DB8",
+                "finalPosition": {
+                    "x": 1188,
+                    "y": 787
+                },
+                "finalColor": "#0C3AEE",
+                "rotated": false
+            }
+        },
+        {
+            "buttons": [
+                {
+                    "position": {
+                        "x": 1188,
+                        "y": 990
+                    }
+                }
+            ],
+            "ramp": {
+                "position": {
+                    "x": 684,
+                    "y": 432
+                },
+                "boxCount": 3,
+                "color": "#B8B8B8",
+                "finalPosition": {
+                    "x": 684,
+                    "y": 540
+                },
+                "finalColor": "#FEFEFE",
+                "rotated": true
+            }
+        }
     ]
 }

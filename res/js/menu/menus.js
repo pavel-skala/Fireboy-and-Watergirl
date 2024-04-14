@@ -88,14 +88,41 @@ function drawMenu() {
     ctx.fillStyle = "#5c4614";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    const fullText = "Fireboy and Watergirl";
+    let fullText = "Fireboy";
     ctx.font = "70px Cinzel";
     ctx.lineWidth = 7;
     ctx.strokeStyle = "black";
-    ctx.strokeText(fullText, canvas.width * 0.24, canvas.height * 0.1);
+    ctx.strokeText(fullText, canvas.width * 0.23, canvas.height * 0.1);
+
+    ctx.fillStyle = "red";
+    ctx.fillText(fullText, canvas.width * 0.23, canvas.height * 0.1);
+
+    fullText = "and";
+    ctx.font = "70px Cinzel";
+    ctx.lineWidth = 7;
+    ctx.strokeStyle = "black";
+    ctx.strokeText(fullText, canvas.width * 0.44, canvas.height * 0.1);
 
     ctx.fillStyle = "yellow";
-    ctx.fillText(fullText, canvas.width * 0.24, canvas.height * 0.1);
+    ctx.fillText(fullText, canvas.width * 0.44, canvas.height * 0.1);
+
+    fullText = "Watergirl";
+    ctx.font = "70px Cinzel";
+    ctx.lineWidth = 7;
+    ctx.strokeStyle = "black";
+    ctx.strokeText(fullText, canvas.width * 0.56, canvas.height * 0.1);
+
+    ctx.fillStyle = "#2596be";
+    ctx.fillText(fullText, canvas.width * 0.56, canvas.height * 0.1);
+
+    fullText = "Created by:";
+    ctx.font = "50px Cinzel";
+    ctx.lineWidth = 7;
+    ctx.strokeStyle = "black";
+    ctx.strokeText(fullText, canvas.width * 0.01, canvas.height * 0.92);
+
+    ctx.fillStyle = "yellow";
+    ctx.fillText(fullText, canvas.width * 0.01, canvas.height * 0.92);
 
     //buttons
     for (const btnName in menuButtons.mainMenu) {
@@ -103,8 +130,8 @@ function drawMenu() {
     }
 
     //paths
-    for (const key in menuDiamondsPath) {
-        const path = menuDiamondsPath[key];
+    for (const key in menuLevelsPath) {
+        const path = menuLevelsPath[key];
         drawFullPath(path);
     }
 
@@ -148,8 +175,8 @@ function unlockAllDiamonds() {
     for (const index in menuLevels) {
         menuLevels[index].unlocked = true;
     }
-    for (const index in menuDiamondsPath) {
-        menuDiamondsPath[index].unlocked = true;
+    for (const index in menuLevelsPath) {
+        menuLevelsPath[index].unlocked = true;
     }
     drawMenu();
 }
@@ -195,13 +222,24 @@ let menuLevels = {
         },
         questsStatus: 0,
         unlocked: false,
+        pathUnlocking: [4],
+        levelsUnlocking: [5],
+        quests: [quests.levelCompleted, quests.allDiamonds],
+    }),
+    5: new MenuLevel({
+        position: {
+            x: canvas.width * 0.48,
+            y: canvas.height * 0.3,
+        },
+        questsStatus: 0,
+        unlocked: false,
         pathUnlocking: [],
         levelsUnlocking: [],
         quests: [quests.levelCompleted, quests.allDiamonds],
     }),
 };
 
-let menuDiamondsPath = {
+let menuLevelsPath = {
     1: {
         position: {
             x: 691,
@@ -235,6 +273,17 @@ let menuDiamondsPath = {
         },
         unlocked: false,
     },
+    4: {
+        position: {
+            x: 691,
+            y: canvas.height * 0.45,
+        },
+        finalPosition: {
+            x: 691,
+            y: canvas.height * 0.36,
+        },
+        unlocked: false,
+    },
 };
 
 export {
@@ -243,6 +292,6 @@ export {
     checkMenuDiamondsCollision,
     unlockAllDiamonds,
     menuLevels,
-    menuDiamondsPath,
+    menuLevelsPath,
     menuDiamondsBorderColor,
 };

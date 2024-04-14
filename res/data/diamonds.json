@@ -384,5 +384,77 @@
             },
             "type": "water"
         }
+    ],
+    "5": [
+        {
+            "position": {
+                "x": 612,
+                "y": 180
+            },
+            "type": "fire"
+        },
+        {
+            "position": {
+                "x": 1296,
+                "y": 72
+            },
+            "type": "fire"
+        },
+        {
+            "position": {
+                "x": 180,
+                "y": 576
+            },
+            "type": "fire"
+        },
+        {
+            "position": {
+                "x": 792,
+                "y": 720
+            },
+            "type": "fire"
+        },
+        {
+            "position": {
+                "x": 864,
+                "y": 936
+            },
+            "type": "fire"
+        },
+        {
+            "position": {
+                "x": 432,
+                "y": 180
+            },
+            "type": "water"
+        },
+        {
+            "position": {
+                "x": 792,
+                "y": 180
+            },
+            "type": "water"
+        },
+        {
+            "position": {
+                "x": 72,
+                "y": 504
+            },
+            "type": "water"
+        },
+        {
+            "position": {
+                "x": 900,
+                "y": 504
+            },
+            "type": "water"
+        },
+        {
+            "position": {
+                "x": 360,
+                "y": 792
+            },
+            "type": "water"
+        }
     ]
 }

@@ -357,6 +357,46 @@ export class Player extends Sprite {
                         }
                     }
                 }
+                //collision for ball
+                else if (block.shape == "ball") {
+                    //legs collision
+                    if (
+                        this.hitbox.position.y + this.hitbox.height >= block.hitbox.position.y &&
+                        this.hitbox.position.y < block.hitbox.position.y + block.hitbox.height
+                    ) {
+                        //player going to left
+                        if (
+                            this.velocity.x < 0 &&
+                            this.hitbox.legs.position.x <=
+                                block.hitbox.position.x + block.hitbox.width &&
+                            this.hitbox.legs.position.x + this.hitbox.legs.width >=
+                                block.hitbox.position.x
+                        ) {
+                            block.velocity.x = Math.min(2, block.velocity.x - 0.5);
+
+                            const offset = this.hitbox.legs.position.x - this.position.x;
+                            this.position.x =
+                                block.hitbox.position.x + block.hitbox.width - offset + 0.01;
+                            break;
+                        }
+                        //player going to right
+                        else if (
+                            this.velocity.x > 0 &&
+                            this.hitbox.legs.position.x + this.hitbox.legs.width >=
+                                block.hitbox.position.x &&
+                            this.hitbox.legs.position.x <= block.hitbox.position.x
+                        ) {
+                            block.velocity.x = Math.min(2, block.velocity.x + 0.5);
+
+                            const offset =
+                                this.hitbox.legs.position.x -
+                                this.position.x +
+                                this.hitbox.legs.width;
+                            this.position.x = block.hitbox.position.x - offset - 0.01;
+                            break;
+                        }
+                    }
+                }
                 //triangle collision
                 else if (block.shape == "triangle") {
                     if (block.direction.y == "down" && this.isOnBlock) {
@@ -720,11 +760,17 @@ export class Player extends Sprite {
                     ) {
                         //player going left
                         if (this.hitbox.position.x <= block.hitbox.position.x) {
+                            if (block.shape == "cube") {
+                                block.position.x += 1;
+                            }
                             this.position.x -= 3;
                             this.sliding.left = true;
                         }
                         //player going right
                         else {
+                            if (block.shape == "cube") {
+                                block.position.x -= 1;
+                            }
                             this.position.x += 3;
                             this.sliding.right = true;
                         }
@@ -762,7 +808,9 @@ export class Player extends Sprite {
                         block.blockedDirection = "down";
                         break;
                     }
-                } else if (block.shape == "button") {
+                }
+                //collision for button
+                else if (block.shape == "button") {
                     if (
                         this.hitbox.legs.position.x <
                             block.hitbox.position.x + block.hitbox.width &&
@@ -770,6 +818,28 @@ export class Player extends Sprite {
                             block.hitbox.position.x
                     ) {
                         block.pressed = true;
+                    }
+                }
+                //collision for ball
+                else if (block.shape == "ball") {
+                    //player going down legs collision
+                    if (
+                        this.velocity.y >= 0 &&
+                        this.hitbox.legs.position.x <
+                            block.hitbox.position.x + block.hitbox.width &&
+                        this.hitbox.legs.position.x + this.hitbox.legs.width >
+                            block.hitbox.position.x &&
+                        this.hitbox.position.y + this.hitbox.height >= block.hitbox.position.y &&
+                        this.hitbox.position.y + this.hitbox.height <=
+                            block.hitbox.position.y + block.hitbox.height
+                    ) {
+                        this.isOnBlock = true;
+                        const offset =
+                            this.hitbox.position.y + this.hitbox.height - this.position.y;
+
+                        this.velocity.y = 0;
+                        this.position.y = block.hitbox.position.y - offset - 0.01;
+                        break;
                     }
                 }
                 //collision for triangle left

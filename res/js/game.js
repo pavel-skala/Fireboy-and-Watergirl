@@ -20,14 +20,13 @@ import {
     setAllDiamonds,
     setLevelCompleted,
     allDiamonds,
-    levelCompleted,
 } from "./helpers.js";
 import {
     drawInGameMenu,
     drawMenu,
     checkMenuDiamondsCollision,
     menuLevels,
-    menuDiamondsPath,
+    menuLevelsPath,
 } from "./menu/menus.js";
 import { Lever } from "./ingameAssets/lever.js";
 import { Cube } from "./ingameAssets/cube.js";
@@ -35,6 +34,7 @@ import { Door } from "./ingameAssets/door.js";
 import { quests } from "./menu/quests.js";
 import { drawTime, formatTime, levelTime } from "./time.js";
 import { Bridge } from "./ingameAssets/bridge.js";
+import { Ball } from "./ingameAssets/ball.js";
 
 let bgBlocks, died, menuButtonPressed, pauseGame, collisionBlocks, ponds;
 
@@ -45,6 +45,7 @@ let allLevers = [];
 let allCubes = [];
 let allDoors = [];
 let allBridges = [];
+let allBalls = [];
 
 let startedTime;
 let pausedTime = 0;
@@ -71,6 +72,7 @@ function startGame() {
     allCubes = [];
     allDoors = [];
     allBridges = [];
+    allBalls = [];
 
     setLevelCompleted(false);
 
@@ -182,6 +184,21 @@ function startGame() {
 
             allBridges.push(newBridge);
             allAssets.push(newBridge);
+        });
+    }
+
+    //balls
+    if (gameData.balls[currentLevel]) {
+        gameData.balls[currentLevel].forEach((ball) => {
+            const newBall = new Ball({
+                position: { ...ball.position },
+                collisionBlocks,
+                allAssets,
+                allPlayers,
+            });
+
+            allBalls.push(newBall);
+            allAssets.push(newBall);
         });
     }
 
@@ -319,6 +336,11 @@ function playGame() {
                                     standingOnButton = true;
                                 }
                             });
+                            allBalls.forEach((ball) => {
+                                if (button.checkStandingOnButton(ball, ball.hitbox)) {
+                                    standingOnButton = true;
+                                }
+                            });
                             if (!standingOnButton) {
                                 button.pressed = false;
                                 button.move("up");
@@ -367,6 +389,11 @@ function playGame() {
             allDoors.forEach((door) => {
                 door.draw();
                 door.pressed = false;
+            });
+
+            allBalls.forEach((ball) => {
+                ball.draw();
+                ball.update();
             });
 
             allBridges.forEach((bridge) => {
@@ -483,6 +510,9 @@ function playGame() {
         allDoors.forEach((door) => {
             door.draw();
         });
+        allBalls.forEach((ball) => {
+            ball.draw();
+        });
         bgBlocks.draw();
         // collisionBlocks.forEach((collisionBlock) => {
         //     collisionBlock.draw();
@@ -530,7 +560,7 @@ function playGame() {
                     menuLevels[index].unlocked = true;
                 });
                 menuLevels[currentLevel].pathUnlocking.forEach((index) => {
-                    menuDiamondsPath[index].unlocked = true;
+                    menuLevelsPath[index].unlocked = true;
                 });
                 setMenuActive("won");
                 drawMenuAnimation(menuActive, "up");

@@ -60,7 +60,8 @@ export class Sprite {
                 this.currentAnimation == "left" ||
                 this.currentAnimation == "right" ||
                 this.shape == "lever" ||
-                (this.shape == "ramp" && this.angle)
+                (this.shape == "ramp" && this.angle) ||
+                this.shape == "ball"
             ) {
                 ctx.save();
                 if (this.shape == "lever") {

@@ -23,6 +23,7 @@ class MenuButton {
         outerColor = "#929292",
         borderColor = "black",
         mainColor = "#848484",
+        fontSize = 75,
     }) {
         this.position = position;
 
@@ -30,7 +31,7 @@ class MenuButton {
         this.height = height;
         this.yOffset = yOffset;
         this.text = text;
-        this.fontSize = 75;
+        this.fontSize = fontSize;
         this.runCode = runCode;
         this.originalValues = {
             position: {
@@ -40,7 +41,7 @@ class MenuButton {
             width,
             height,
             text,
-            fontSize: 75,
+            fontSize,
         };
 
         this.outerColor = outerColor;
@@ -72,6 +73,9 @@ class MenuButton {
             case 10:
                 this.textGap = 20;
                 break;
+            case 11:
+                this.textGap = 20;
+                break;
         }
     }
     draw() {
@@ -83,11 +87,11 @@ class MenuButton {
         ctx.font = `${this.fontSize}px Cinzel`;
         ctx.lineWidth = 7;
         ctx.strokeStyle = "black";
-        ctx.strokeText(this.text, this.position.x + this.textGap, this.position.y + 80);
+        ctx.strokeText(this.text, this.position.x + this.textGap, this.position.y + this.fontSize);
 
         ctx.font = `${this.fontSize}px Cinzel`;
         ctx.fillStyle = "yellow";
-        ctx.fillText(this.text, this.position.x + this.textGap, this.position.y + 80);
+        ctx.fillText(this.text, this.position.x + this.textGap, this.position.y + this.fontSize);
     }
     scaleDown() {
         ctx.fillStyle = this.outerColor;
@@ -230,6 +234,23 @@ const menuButtons = {
                 unlockAllDiamonds();
                 delete menuButtons.mainMenu.unlock;
                 drawMenu();
+            },
+        }),
+        author: new MenuButton({
+            position: {
+                x: canvas.width * 0.06,
+                y: canvas.height * 0.93,
+            },
+            width: 340,
+            height: canvas.height * 0.06,
+            yOffset: canvas.height * 0.43,
+            text: "Pavel Skála",
+            mainColor: "#5c4614",
+            borderColor: "#5c4614",
+            outerColor: "#5c4614",
+            fontSize: 50,
+            runCode: () => {
+                window.open("https://github.com/pavel-skala", "_blank");
             },
         }),
     },

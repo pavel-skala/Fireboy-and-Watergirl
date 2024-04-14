@@ -57,7 +57,16 @@ function setAllDiamonds(setValue) {
 }
 
 let gameData = {};
-const jsonsFiles = ["players", "diamonds", "buttons", "levers", "cubes", "doors", "bridges"];
+const jsonsFiles = [
+    "players",
+    "diamonds",
+    "buttons",
+    "levers",
+    "cubes",
+    "doors",
+    "bridges",
+    "balls",
+];
 
 async function loadData() {
     try {
