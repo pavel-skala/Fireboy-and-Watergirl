@@ -1,9 +1,8 @@
 import { Sprite } from "../sprite.js";
-import { menuButtons } from "./buttons.js";
-import { canvas, ctx, currentLevel } from "../helpers.js";
-import { quests } from "../game.js";
+import { menuButtons, unlockAllDiamondsButton } from "./buttons.js";
+import { canvas, ctx, currentLevel, menuLevels, menuLevelsPath, setMenuLevels, setMenuLevelsPath } from "../helpers.js";
 import { levelTime } from "../time.js";
-import { drawArrow } from "./quests.js";
+import { drawArrow, quests } from "./quests.js";
 import { MenuLevel } from "./menuLevel.js";
 
 const menuBg = new Sprite({
@@ -181,7 +180,28 @@ function unlockAllDiamonds() {
     drawMenu();
 }
 
-let menuLevels = {
+function resetProgress() {
+    localStorage.clear();
+
+    for (const index in menuLevels) {
+        menuLevels[index].setQuestsStatus(0);
+        if (index == 1) {
+            menuLevels[index].unlocked = true;
+            continue;
+        }
+        menuLevels[index].unlocked = false;
+    }
+
+    for (const index in menuLevelsPath) {
+        menuLevelsPath[index].unlocked = false;
+    }
+
+    menuButtons.mainMenu.unlock = unlockAllDiamondsButton;
+
+    drawMenu();
+}
+
+setMenuLevels({
     1: new MenuLevel({
         position: {
             x: canvas.width * 0.48,
@@ -233,13 +253,24 @@ let menuLevels = {
         },
         questsStatus: 0,
         unlocked: false,
-        pathUnlocking: [],
-        levelsUnlocking: [],
+        pathUnlocking: [5],
+        levelsUnlocking: [6],
         quests: [quests.levelCompleted, quests.allDiamonds],
     }),
-};
+    6: new MenuLevel({
+        position: {
+            x: canvas.width * 0.48,
+            y: canvas.height * 0.15,
+        },
+        questsStatus: 0,
+        unlocked: false,
+        pathUnlocking: [],
+        levelsUnlocking: [],
+        quests: [quests.finalDiamond],
+    }),
+});
 
-let menuLevelsPath = {
+setMenuLevelsPath({
     1: {
         position: {
             x: 691,
@@ -284,14 +315,24 @@ let menuLevelsPath = {
         },
         unlocked: false,
     },
-};
+    5: {
+        position: {
+            x: 691,
+            y: canvas.height * 0.3,
+        },
+        finalPosition: {
+            x: 691,
+            y: canvas.height * 0.21,
+        },
+        unlocked: false,
+    },
+});
 
 export {
     drawMenu,
     drawInGameMenu,
     checkMenuDiamondsCollision,
     unlockAllDiamonds,
-    menuLevels,
-    menuLevelsPath,
     menuDiamondsBorderColor,
+    resetProgress,
 };

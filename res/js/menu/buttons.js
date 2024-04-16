@@ -1,6 +1,6 @@
 import { Sprite } from "../sprite.js";
 import { canvas, ctx, setContinueAnimation, setEndGame, setMenuActive } from "../helpers.js";
-import { drawMenu, unlockAllDiamonds } from "./menus.js";
+import { drawMenu, resetProgress, unlockAllDiamonds } from "./menus.js";
 
 //check collision for button in menu
 function checkButtonCollision(pos, button) {
@@ -76,6 +76,9 @@ class MenuButton {
             case 11:
                 this.textGap = 20;
                 break;
+            case 14:
+                this.textGap = 20;
+                break;
         }
     }
     draw() {
@@ -125,7 +128,26 @@ const pauseButton = new Sprite({
     imgSrc: "./res/img/pause_img.png",
 });
 
-const menuButtons = {
+const unlockAllDiamondsButton = new MenuButton({
+    position: {
+        x: canvas.width - 520,
+        y: canvas.height * 0.88,
+    },
+    width: 500,
+    height: canvas.height * 0.1,
+    yOffset: canvas.height * 0.43,
+    text: "Unlock all",
+    mainColor: "#5c4614",
+    borderColor: "#5c4614",
+    outerColor: "#5c4614",
+    runCode: () => {
+        unlockAllDiamonds();
+        delete menuButtons.mainMenu.unlock;
+        drawMenu();
+    },
+});
+
+let menuButtons = {
     lost: {
         menu: new MenuButton({
             position: {
@@ -201,6 +223,7 @@ const menuButtons = {
             },
         }),
     },
+
     won: {
         continue: new MenuButton({
             position: {
@@ -218,22 +241,22 @@ const menuButtons = {
         }),
     },
     mainMenu: {
-        unlock: new MenuButton({
+        unlock: unlockAllDiamondsButton,
+        reset: new MenuButton({
             position: {
-                x: canvas.width - 520,
-                y: canvas.height * 0.88,
+                x: canvas.width - 430,
+                y: canvas.height * 0.78,
             },
-            width: 500,
-            height: canvas.height * 0.1,
+            width: 430,
+            height: canvas.height * 0.065,
             yOffset: canvas.height * 0.43,
-            text: "Unlock all",
+            text: "Reset Progress",
             mainColor: "#5c4614",
             borderColor: "#5c4614",
             outerColor: "#5c4614",
+            fontSize: 50,
             runCode: () => {
-                unlockAllDiamonds();
-                delete menuButtons.mainMenu.unlock;
-                drawMenu();
+                resetProgress();
             },
         }),
         author: new MenuButton({
@@ -256,4 +279,4 @@ const menuButtons = {
     },
 };
 
-export { pauseButton, menuButtons, checkButtonCollision };
+export { pauseButton, menuButtons, checkButtonCollision, unlockAllDiamondsButton };

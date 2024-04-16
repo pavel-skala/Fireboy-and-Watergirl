@@ -174,5 +174,103 @@
                 "rotated": true
             }
         }
+    ],
+    "6": [
+        {
+            "buttons": [
+                {
+                    "position": {
+                        "x": 972,
+                        "y": 342
+                    }
+                }
+            ],
+            "ramp": {
+                "position": {
+                    "x": 1188,
+                    "y": 720
+                },
+                "boxCount": 3,
+                "color": "#092DB8",
+                "finalPosition": {
+                    "x": 1188,
+                    "y": 648
+                },
+                "finalColor": "#0C3AEE",
+                "rotated": true
+            }
+        },
+        {
+            "buttons": [
+                {
+                    "position": {
+                        "x": 720,
+                        "y": 774
+                    }
+                }
+            ],
+            "ramp": {
+                "position": {
+                    "x": 820,
+                    "y": 643
+                },
+                "boxCount": 3,
+                "color": "#b00101",
+                "finalPosition": {
+                    "x": 720,
+                    "y": 643
+                },
+                "finalColor": "#FE0000",
+                "rotated": false
+            }
+        },
+        {
+            "buttons": [
+                {
+                    "position": {
+                        "x": 360,
+                        "y": 882
+                    }
+                }
+            ],
+            "ramp": {
+                "position": {
+                    "x": 252,
+                    "y": 792
+                },
+                "boxCount": 3,
+                "color": "#009201",
+                "finalPosition": {
+                    "x": 324,
+                    "y": 792
+                },
+                "finalColor": "#00C900",
+                "rotated": false
+            }
+        },
+        {
+            "buttons": [
+                {
+                    "position": {
+                        "x": 252,
+                        "y": 882
+                    }
+                }
+            ],
+            "ramp": {
+                "position": {
+                    "x": 648,
+                    "y": 792
+                },
+                "boxCount": 3,
+                "color": "#9d09a1",
+                "finalPosition": {
+                    "x": 648,
+                    "y": 720
+                },
+                "finalColor": "#EB0EF0",
+                "rotated": true
+            }
+        }
     ]
 }

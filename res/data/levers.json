@@ -114,5 +114,29 @@
                 "rotated": true
             }
         }
+    ],
+    "6": [
+        {
+            "lever": {
+                "position": {
+                    "x": 540,
+                    "y": 855
+                }
+            },
+            "ramp": {
+                "position": {
+                    "x": 1188,
+                    "y": 900
+                },
+                "boxCount": 3,
+                "color": "#B8B8B8",
+                "finalPosition": {
+                    "x": 1188,
+                    "y": 1008
+                },
+                "finalColor": "#FEFEFE",
+                "rotated": true
+            }
+        }
     ]
 }

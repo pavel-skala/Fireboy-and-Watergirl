@@ -20,14 +20,11 @@ import {
     setAllDiamonds,
     setLevelCompleted,
     allDiamonds,
-} from "./helpers.js";
-import {
-    drawInGameMenu,
-    drawMenu,
-    checkMenuDiamondsCollision,
     menuLevels,
     menuLevelsPath,
-} from "./menu/menus.js";
+    saveDataToLocalStorage,
+} from "./helpers.js";
+import { drawInGameMenu, drawMenu, checkMenuDiamondsCollision } from "./menu/menus.js";
 import { Lever } from "./ingameAssets/lever.js";
 import { Cube } from "./ingameAssets/cube.js";
 import { Door } from "./ingameAssets/door.js";
@@ -562,6 +559,9 @@ function playGame() {
                 menuLevels[currentLevel].pathUnlocking.forEach((index) => {
                     menuLevelsPath[index].unlocked = true;
                 });
+
+                saveDataToLocalStorage();
+
                 setMenuActive("won");
                 drawMenuAnimation(menuActive, "up");
             }
@@ -687,7 +687,7 @@ function playGame() {
             switch (event.key) {
                 case player.keys.up:
                     if (player.isOnBlock && !player.keys.pressed.up && !player.rampBlocked) {
-                        player.velocity.y = -4;
+                        player.velocity.y = -4.35;
                         player.keys.pressed.up = true;
                     }
                     break;
@@ -736,4 +736,4 @@ function playGame() {
     });
 }
 
-export { playGame, quests };
+export { playGame };

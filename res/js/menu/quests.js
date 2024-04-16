@@ -38,7 +38,7 @@ class Quest {
         ) {
             this.status.currentRow = 2;
             this.completed = true;
-            return
+            return;
         }
 
         this.status.currentRow = 1;
@@ -99,6 +99,22 @@ quests.allDiamonds = new Quest({
     },
     offsetY: 350,
     currentRow: 2,
+    requirement: {
+        variable: allDiamonds,
+        getVariable: () => {
+            return allDiamonds;
+        },
+        required: [],
+    },
+});
+
+quests.finalDiamond = new Quest({
+    position: {
+        x: 450,
+        y: 550,
+    },
+    offsetY: 285,
+    currentRow: 3,
     requirement: {
         variable: allDiamonds,
         getVariable: () => {

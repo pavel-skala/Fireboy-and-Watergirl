@@ -9,12 +9,12 @@ export class Bridge extends Sprite {
 
         this.position = position;
 
-        (this.hitbox = {
+        this.hitbox = {
             position,
             width: 144,
             height: 36,
-        }),
-            (this.shape = "square");
+        };
+        this.shape = "square";
 
         this.chainsCount = chainsCount;
         this.chains = [];

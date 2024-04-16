@@ -21,5 +21,10 @@ export class Diamond extends Sprite {
             width: 44,
             height: 36,
         };
+
+        if (this.type == "final") {
+            this.hitbox.width = 54;
+            this.hitbox.height = 44;
+        }
     }
 }

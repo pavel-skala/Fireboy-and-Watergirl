@@ -26,7 +26,6 @@ export class MenuLevel extends Sprite {
     setQuestsStatus(num) {
         this.questsStatus = num;
 
-        //final diamond
         this.currentRow = num + 1;
     }
     drawFullDiamond() {

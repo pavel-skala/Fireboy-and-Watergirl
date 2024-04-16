@@ -32,6 +32,9 @@ let menuActive = "mainMenu";
 let levelCompleted = false;
 let allDiamonds = [];
 
+let menuLevels = {};
+let menuLevelsPath = {};
+
 function setContinueAnimation(setValue) {
     continueAnimation = setValue;
 }
@@ -54,6 +57,14 @@ function setLevelCompleted(setValue) {
 
 function setAllDiamonds(setValue) {
     allDiamonds = setValue;
+}
+
+function setMenuLevels(setValue) {
+    menuLevels = setValue;
+}
+
+function setMenuLevelsPath(setValue) {
+    menuLevelsPath = setValue;
 }
 
 let gameData = {};
@@ -81,6 +92,49 @@ async function loadData() {
     }
 }
 
+function loadDataFromLocalStorage() {
+    let newLevels = window.localStorage.getItem("menuLevels");
+    if (newLevels) {
+        newLevels = JSON.parse(newLevels);
+        for (let i = 1; i <= Object.keys(newLevels).length; i++) {
+            for (const key in newLevels[i]) {
+                menuLevels[i][key] = newLevels[i][key];
+                menuLevels[i].setQuestsStatus(menuLevels[i].questsStatus);
+            }
+        }
+    }
+
+    let newLevelsPath = window.localStorage.getItem("menuLevelsPath");
+    if (newLevelsPath) {
+        newLevelsPath = JSON.parse(newLevelsPath);
+        for (let i = 1; i <= Object.keys(newLevelsPath).length; i++) {
+            for (const key in newLevelsPath[i]) {
+                menuLevelsPath[i][key] = newLevelsPath[i][key];
+            }
+        }
+    }
+}
+
+function saveDataToLocalStorage() {
+    let levels = {};
+
+    for (let i = 1; i <= Object.keys(menuLevels).length; i++) {
+        levels[i] = {};
+        levels[i].unlocked = menuLevels[i].unlocked;
+        levels[i].questsStatus = menuLevels[i].questsStatus;
+    }
+
+    let levelsPath = {};
+
+    for (let i = 1; i <= Object.keys(menuLevelsPath).length; i++) {
+        levelsPath[i] = {};
+        levelsPath[i].unlocked = menuLevelsPath[i].unlocked;
+    }
+
+    window.localStorage.setItem("menuLevels", JSON.stringify(levels));
+    window.localStorage.setItem("menuLevelsPath", JSON.stringify(levelsPath));
+}
+
 export {
     getMousePos,
     GAME_SIZE,
@@ -100,4 +154,10 @@ export {
     setLevelCompleted,
     allDiamonds,
     setAllDiamonds,
+    menuLevels,
+    menuLevelsPath,
+    setMenuLevels,
+    setMenuLevelsPath,
+    loadDataFromLocalStorage,
+    saveDataToLocalStorage,
 };
