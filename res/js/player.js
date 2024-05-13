@@ -760,17 +760,11 @@ export class Player extends Sprite {
                     ) {
                         //player going left
                         if (this.hitbox.position.x <= block.hitbox.position.x) {
-                            if (block.shape == "cube") {
-                                block.position.x += 1;
-                            }
                             this.position.x -= 3;
                             this.sliding.left = true;
                         }
                         //player going right
                         else {
-                            if (block.shape == "cube") {
-                                block.position.x -= 1;
-                            }
                             this.position.x += 3;
                             this.sliding.right = true;
                         }

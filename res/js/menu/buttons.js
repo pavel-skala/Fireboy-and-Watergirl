@@ -12,6 +12,18 @@ function checkButtonCollision(pos, button) {
     );
 }
 
+const TEXT_GAP = {
+    3: 70,
+    4: 42,
+    5: 40,
+    6: 10,
+    7: 30,
+    8: 30,
+    10: 20,
+    11: 20,
+    14: 20,
+};
+
 class MenuButton {
     constructor({
         position,
@@ -50,36 +62,7 @@ class MenuButton {
 
         this.pressed = false;
 
-        this.textGap;
-        switch (this.text.length) {
-            case 3:
-                this.textGap = 70;
-                break;
-            case 4:
-                this.textGap = 42;
-                break;
-            case 5:
-                this.textGap = 40;
-                break;
-            case 6:
-                this.textGap = 10;
-                break;
-            case 7:
-                this.textGap = 30;
-                break;
-            case 8:
-                this.textGap = 30;
-                break;
-            case 10:
-                this.textGap = 20;
-                break;
-            case 11:
-                this.textGap = 20;
-                break;
-            case 14:
-                this.textGap = 20;
-                break;
-        }
+        this.textGap = TEXT_GAP[this.text.length];
     }
     draw() {
         ctx.fillStyle = this.borderColor;

@@ -1,6 +1,14 @@
 import { Sprite } from "../sprite.js";
 import { menuButtons, unlockAllDiamondsButton } from "./buttons.js";
-import { canvas, ctx, currentLevel, menuLevels, menuLevelsPath, setMenuLevels, setMenuLevelsPath } from "../helpers.js";
+import {
+    canvas,
+    ctx,
+    currentLevel,
+    menuLevels,
+    menuLevelsPath,
+    setMenuLevels,
+    setMenuLevelsPath,
+} from "../helpers.js";
 import { levelTime } from "../time.js";
 import { drawArrow, quests } from "./quests.js";
 import { MenuLevel } from "./menuLevel.js";
@@ -38,7 +46,7 @@ const menusTexts = {
         ctx.fillText("Paused", canvas.width * 0.35, menuBg.position.y + canvas.height * 0.25);
     },
     won: () => {
-        const fullText = "Time : " + levelTime.minutes + ":" + levelTime.seconds;
+        const fullText = `Time : ${levelTime.minutes}:${levelTime.seconds}`;
         //time
         ctx.font = "50px Cinzel";
         ctx.lineWidth = 7;
@@ -201,10 +209,12 @@ function resetProgress() {
     drawMenu();
 }
 
+let menuLevelX = canvas.width * 0.48;
+
 setMenuLevels({
     1: new MenuLevel({
         position: {
-            x: canvas.width * 0.48,
+            x: menuLevelX,
             y: canvas.height * 0.9,
         },
         questsStatus: 0,
@@ -215,7 +225,7 @@ setMenuLevels({
     }),
     2: new MenuLevel({
         position: {
-            x: canvas.width * 0.48,
+            x: menuLevelX,
             y: canvas.height * 0.75,
         },
         questsStatus: 0,
@@ -226,7 +236,7 @@ setMenuLevels({
     }),
     3: new MenuLevel({
         position: {
-            x: canvas.width * 0.48,
+            x: menuLevelX,
             y: canvas.height * 0.6,
         },
         questsStatus: 0,
@@ -237,7 +247,7 @@ setMenuLevels({
     }),
     4: new MenuLevel({
         position: {
-            x: canvas.width * 0.48,
+            x: menuLevelX,
             y: canvas.height * 0.45,
         },
         questsStatus: 0,
@@ -248,7 +258,7 @@ setMenuLevels({
     }),
     5: new MenuLevel({
         position: {
-            x: canvas.width * 0.48,
+            x: menuLevelX,
             y: canvas.height * 0.3,
         },
         questsStatus: 0,
@@ -259,7 +269,7 @@ setMenuLevels({
     }),
     6: new MenuLevel({
         position: {
-            x: canvas.width * 0.48,
+            x: menuLevelX,
             y: canvas.height * 0.15,
         },
         questsStatus: 0,
@@ -270,58 +280,60 @@ setMenuLevels({
     }),
 });
 
+let menuLevelPathX = 691;
+
 setMenuLevelsPath({
     1: {
         position: {
-            x: 691,
+            x: menuLevelPathX,
             y: canvas.height * 0.9,
         },
         finalPosition: {
-            x: 691,
+            x: menuLevelPathX,
             y: canvas.height * 0.81,
         },
         unlocked: false,
     },
     2: {
         position: {
-            x: 691,
+            x: menuLevelPathX,
             y: canvas.height * 0.75,
         },
         finalPosition: {
-            x: 691,
+            x: menuLevelPathX,
             y: canvas.height * 0.66,
         },
         unlocked: false,
     },
     3: {
         position: {
-            x: 691,
+            x: menuLevelPathX,
             y: canvas.height * 0.6,
         },
         finalPosition: {
-            x: 691,
+            x: menuLevelPathX,
             y: canvas.height * 0.51,
         },
         unlocked: false,
     },
     4: {
         position: {
-            x: 691,
+            x: menuLevelPathX,
             y: canvas.height * 0.45,
         },
         finalPosition: {
-            x: 691,
+            x: menuLevelPathX,
             y: canvas.height * 0.36,
         },
         unlocked: false,
     },
     5: {
         position: {
-            x: 691,
+            x: menuLevelPathX,
             y: canvas.height * 0.3,
         },
         finalPosition: {
-            x: 691,
+            x: menuLevelPathX,
             y: canvas.height * 0.21,
         },
         unlocked: false,

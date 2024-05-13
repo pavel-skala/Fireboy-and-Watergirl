@@ -237,13 +237,11 @@ export class Cube extends Sprite {
                         if (this.hitbox.position.x >= block.hitbox.position.x) {
                             block.sliding.left = true;
                             block.position.x -= 2;
-                            this.position.x += 2;
                         }
                         //player going right
                         else {
                             block.sliding.right = true;
                             block.position.x += 2;
-                            this.position.x -= 2;
                         }
                         break;
                     }
