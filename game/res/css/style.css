@@ -1,0 +1,187 @@
+@import url("https://fonts.googleapis.com/css2?family=Cinzel");
+
+* {
+    font-family: "Cinzel", serif;
+    box-sizing: border-box;
+    user-select: none;
+}
+
+button {
+    cursor: pointer;
+    max-width: 100px;
+}
+
+body {
+    background-color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* margin: 0 auto;
+        height: 100vh;
+        width: 90%;
+        max-width: 1200px; */
+}
+
+#canvas {
+    object-fit: contain;
+    max-width: 100%;
+    max-height: 100%;
+    /* display: none; */
+}
+
+section {
+    position: absolute;
+    object-fit: contain;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+/* #welcomeSection h1{
+    font-size: 70px;
+    color: #fff;
+    -webkit-text-stroke: 7px #000;
+} */
+
+#enterNicknameSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    display: none;
+}
+
+#enterNicknameSection h1 {
+    font-size: 50px;
+}
+
+#enterNicknameCondition {
+    display: none;
+    color: red;
+    font-size: 23px;
+}
+
+#enterNickname {
+    width: 200px;
+    height: 50px;
+    font-size: 30px;
+    color: white;
+    padding-left: 10px;
+    background-color: black;
+    border-radius: 10px;
+    border: 1px solid white;
+    margin-top: 28px;
+}
+
+#enterNickname:focus {
+    box-shadow: 2px 2px 13px 2px #ffffff66;
+}
+
+#enterNicknameBtn {
+    width: 200px;
+    height: 80px;
+    margin-top: 50px;
+    font-size: 40px;
+    color: white;
+    background-color: black;
+    border-radius: 6px;
+    border: 0;
+    transition: 500ms box-shadow;
+    margin-top: 50px;
+}
+
+/* input {
+    padding: 10px;
+    width: 300px;
+    margin: 10px 0;
+} */
+
+button {
+    padding: 10px;
+    margin: 10px 0;
+}
+
+#roomsSection {
+    display: flex;
+    flex-wrap: wrap;
+    display: none;
+    width: 65%;
+}
+
+table {
+    width: 100%;
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+table tr {
+    height: 70px;
+}
+
+#roomList tr:not(:first-child) {
+    cursor: pointer;
+}
+
+table tr > th:nth-child(1) {
+    width: 20%;
+}
+
+table tr > th:nth-child(4) {
+    width: 15%;
+}
+
+table th,
+table td {
+    border-bottom: 1px solid black;
+    text-align: center;
+    height: 70px;
+    padding: 0;
+}
+
+table td > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+table td > div > img {
+    height: 70px;
+    margin-left: -50px;
+}
+
+table td > div > span {
+    margin-left: 10px;
+}
+
+#pickCharacterSection {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+}
+
+#characters {
+    display: flex;
+    align-items: center;
+    width: 25%;
+    justify-content: space-evenly;
+}
+
+.character {
+    cursor: pointer;
+}
+
+#waitingSection {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+}
+
+#disconnectSection {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+}

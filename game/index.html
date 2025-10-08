@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <link rel="stylesheet" href="./res/css/style.css" />
+    </head>
+    <body>
+
+        <section id="disconnectSection">
+            <h1>Player <span id="disconnectNickname"></span> disconnect</h1>
+            <h2>Redirecting back in <span id="disconnectCountdown">5</span></h2>
+        </section>
+
+        <canvas id="canvas"></canvas>
+
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="./res/js/online.js" type="module"></script>
+    </body>
+</html>
