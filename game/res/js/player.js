@@ -72,20 +72,7 @@ export class Player extends Sprite {
         this.hitboxPositionCalc();
 
         this.lastPosition = this.hitbox.position;
-        ctx.fillStyle = "rgba(0,0,255, 0.5)";
-        ctx.fillRect(
-            this.hitbox.position.x,
-            this.hitbox.position.y,
-            this.hitbox.width,
-            this.hitbox.height - this.hitbox.legs.height
-        );
-        ctx.fillStyle = "rgba(0,255,0, 0.5)";
-        ctx.fillRect(
-            this.hitbox.legs.position.x,
-            this.hitbox.legs.position.y,
-            this.hitbox.legs.width,
-            this.hitbox.legs.height
-        );
+        
 
         this.position.x += this.velocity.x;
 

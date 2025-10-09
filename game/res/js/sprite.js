@@ -4,9 +4,9 @@ export class Sprite {
     constructor({
         position,
         imgSrc,
-        frameRate = 1,
         animations,
         flipImage = false,
+        frameRate = 1,
         imgRows = 1,
         currentRow = 1,
         frameDelay = 4,
@@ -28,8 +28,8 @@ export class Sprite {
         this.imgRows = imgRows;
         this.currentRow = currentRow;
 
-        this.frameCount = 0;
         this.currentFrame = 0;
+        this.frameCount = 0;
 
         this.flipImage = flipImage;
         if (this.flipImage) {

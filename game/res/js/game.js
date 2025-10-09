@@ -40,7 +40,6 @@ import { drawTime, formatTime, levelTime } from "./time.js";
 import { Ball } from "./ingameAssets/ball.js";
 import { socket } from "./online.js";
 
-const fpsDisplay = document.getElementById("fpsDisplay");
 
 let bgBlocks, died, pauseGame, collisionBlocks, ponds;
 
@@ -299,9 +298,6 @@ function startGame() {
 function playGame() {
     drawMainMenu();
 
-    let startTime = Date.now();
-    let frame = 0;
-    let fps;
 
     let now;
     let delta;
@@ -415,9 +411,9 @@ function playGame() {
             });
 
             bgBlocks.draw();
-            collisionBlocks.forEach((collisionBlock) => {
-                collisionBlock.draw();
-            });
+            // collisionBlocks.forEach((collisionBlock) => {
+            //     collisionBlock.draw();
+            // });
 
             allLevers.forEach((lever) => {
                 lever.checkAngle();
@@ -544,9 +540,9 @@ function playGame() {
             ball.draw();
         });
         bgBlocks.draw();
-        collisionBlocks.forEach((collisionBlock) => {
-            collisionBlock.draw();
-        });
+        // collisionBlocks.forEach((collisionBlock) => {
+        //     collisionBlock.draw();
+        // });
         allLevers.forEach((lever) => {
             lever.drawLever();
         });

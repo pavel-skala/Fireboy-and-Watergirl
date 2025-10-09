@@ -1,4 +1,4 @@
-import { ctx, currentLevel, menuLevels } from "../helpers.js";
+import { ctx } from "../helpers.js";
 import { menuDiamondsBorderColor } from "./menus.js";
 import { Sprite } from "../sprite.js";
 

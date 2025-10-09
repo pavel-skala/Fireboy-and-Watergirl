@@ -109,11 +109,11 @@ export class Ramp {
             ramp.draw();
         });
     }
-    addValue(addingValue) {
-        this.position[this.direction] += addingValue;
-        this.hitbox.position[this.direction] += addingValue;
+    addValue(value) {
+        this.position[this.direction] += value;
+        this.hitbox.position[this.direction] += value;
         this.ramps.forEach((ramp) => {
-            ramp.position[this.direction] += addingValue;
+            ramp.position[this.direction] += value;
         });
     }
     move(pressed) {

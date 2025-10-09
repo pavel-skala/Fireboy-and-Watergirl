@@ -272,24 +272,25 @@ let menuButtons = {
         }),
     },
     welcomeMenu: {
-        offline: new MenuButton({
-            position: {
-                x: canvas.width * 0.1 + (canvas.width * 0.8 - 2 * 300 - 125) / 2,
-                y: canvas.height * 0.5,
-            },
-            width: 300,
-            height: canvas.height * 0.1,
-            yOffset: canvas.height * 0.3,
-            withoutBg: true,
-            text: "offline",
-            runCode: () => {
-                setMenuActive("mainMenu");
-                startOfflineGame();
-            },
-        }),
+        // offline: new MenuButton({
+        //     position: {
+        //         x: canvas.width * 0.1 + (canvas.width * 0.8 - 2 * 300 - 125) / 2,
+        //         y: canvas.height * 0.5,
+        //     },
+        //     width: 300,
+        //     height: canvas.height * 0.1,
+        //     yOffset: canvas.height * 0.3,
+        //     withoutBg: true,
+        //     text: "offline",
+        //     runCode: () => {
+        //         setMenuActive("mainMenu");
+        //         startOfflineGame();
+        //     },
+        // }),
         online: new MenuButton({
             position: {
-                x: canvas.width * 0.1 + (canvas.width * 0.8 - 2 * 300 - 125) / 2 + 425,
+                // x: canvas.width * 0.1 + (canvas.width * 0.8 - 2 * 300 - 125) / 2 + 425,
+                x: canvas.width * 0.1 + (canvas.width * 0.5 - 2 * 300 - 125) / 2 + 425,
                 y: canvas.height * 0.5,
             },
             width: 300,

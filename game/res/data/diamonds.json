@@ -340,49 +340,49 @@
                 "x": 1008,
                 "y": 252
             },
-            "type": "water" 
+            "type": "water"
         },
         {
             "position": {
                 "x": 936,
                 "y": 468
             },
-            "type": "water" 
+            "type": "water"
         },
         {
             "position": {
                 "x": 720,
                 "y": 504
             },
-            "type": "water" 
+            "type": "water"
         },
         {
             "position": {
                 "x": 504,
                 "y": 756
             },
-            "type": "water" 
+            "type": "water"
         },
         {
             "position": {
                 "x": 792,
                 "y": 756
             },
-            "type": "water" 
+            "type": "water"
         },
         {
             "position": {
                 "x": 1080,
                 "y": 756
             },
-            "type": "water" 
+            "type": "water"
         },
         {
             "position": {
                 "x": 468,
                 "y": 900
             },
-            "type": "water" 
+            "type": "water"
         }
     ],
     "5": [
