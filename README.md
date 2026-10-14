@@ -7,5 +7,5 @@
 ### [GitHub Repository](https://github.com/pavel-skala/Fireboy-and-Watergirl/tree/online)
 
 ## Offline Game
-### [Play](https://pavel-skala.github.io/Fireboy-and-Watergirl-online/)
+### [Play](https://pavel-skala.github.io/Fireboy-and-Watergirl/)
 ### [GitHub Repository](https://github.com/pavel-skala/Fireboy-and-Watergirl)
